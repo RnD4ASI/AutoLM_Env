@@ -1,0 +1,101 @@
+{
+    "version": "1.0.0",
+    "description": "Schema for memory database supporting episodic memory, personality memory",
+    "collections": {
+      "episodic_memory": {
+          "description": "Working memory for individual tasks with retrieved context",
+          "required_fields": {
+              "memory_id": {
+                  "type": "string",
+                  "description": "Unique identifier for memory entry",
+                  "format": "uuid",
+                  "indexed": true,
+                  "unique": true
+              },
+              "query": {
+                  "type": "text",
+                  "description": "The original user query",
+                  "max_length": 10000
+              },
+              "entity": {
+                "type": "string",
+                "description": "Entity associated with the memory"
+              },
+              "context": {
+                  "type": "jsonb",
+                  "description": "Retrieved context and information for this task with metadata" 
+              }
+          },
+          "optional_fields": {
+              "transformed_query": {
+                  "type": "text",
+                  "description": "Processed/optimized version of the original query"
+              },
+              "prompt_id": {
+                  "type": "string",
+                  "description": "Unique identifier for the prompt",
+                  "format": "varchar(255)",
+                  "unique": false
+              }
+          },
+          "indexes": [
+              {"fields": ["memory_id"], "type": "unique"}
+          ]
+      },
+      "personality_memory": {
+        "description": "Behavioral modes and personality configurations",
+        "required_fields": {
+            "mode_id": {
+                "type": "string",
+                "description": "Unique identifier for the mode",
+                "format": "uuid",
+                "indexed": true
+            },
+            "mode_name": {
+                "type": "string",
+                "description": "Name of the mode",
+                "max_length": 255,
+                "unique": true,
+                "indexed": false
+            },
+            "personality_type": {
+                "type": "string",
+                "description": "Type of personality",
+                "enum": ["openness", "conscientiousness", "extraversion", "agreeableness", "neuroticism"],
+                "indexed": false
+            },
+            "cognitive_style": {
+                "type": "string",
+                "description": "Type of cognitive style",
+                "enum": ["analytical", "creative", "systematic", "intuitive", "collaborative"],
+                "indexed": false
+            },
+            "mbti_type": {
+                "type": "string",
+                "description": "MBTI personality type",
+                "pattern": "^[IE][NS][TF][JP]$",
+                "max_length": 4
+            }
+        },
+        "optional_fields": {
+            "mode_description": {
+                "type": "text",
+                "description": "Detailed description of the mode"
+            },
+            "activation_contexts": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "Contexts where this mode should be activated"
+            },
+            "activation_triggers": {
+                "type": "jsonb",
+                "description": "Triggers that activate this mode"
+            }
+        },
+        "indexes": [
+            {"fields": ["mode_id"], "type": "unique"}   
+        ]
+    }
+  }
+}
+    

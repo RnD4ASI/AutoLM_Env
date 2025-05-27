@@ -1,0 +1,271 @@
+﻿Level,Heading,File,Index
+1,About this guide,APG110,1
+1,Glossary,APG110,2
+1,Introduction,APG110,3
+1,Chapter 1 - Capital management,APG110,4
+2,Minimum capital requirements,APG110,5
+2,Reductions in capital,APG110,6
+2,Regulatory capital buffers and management targets,APG110,7
+2,Use of regulatory capital buffers in stress,APG110,8
+2,Capital distributions,APG110,9
+1,Chapter 2 - Countercyclical capital buffer,APG110,10
+2,Determining the CCyB,APG110,11
+1,Chapter 3 - Simplified requirements,APG110,12
+2,Simplified requirements,APG110,13
+1,Chapter 4 - IRB Capital floor,APG110,14
+1,Chapter 5 - Leverage ratio,APG110,15
+2,On-balance sheet exposures,APG110,16
+2,Derivative exposures,APG110,17
+3,Treatment of related collateral,APG110,18
+3,Treatment of clearing services,APG110,19
+3,Additional treatment for written credit derivatives,APG110,20
+2,SFT exposures,APG110,21
+1,About this guide,APG112,1
+1,Glossary,APG112,2
+1,Introduction,APG112,3
+1,Chapter 1 - Property exposures,APG112,4
+2,Standard loans,APG112,5
+2,Non-standard loans,APG112,6
+2,Residential property,APG112,7
+2,Commercial property,APG112,8
+2,"Land acquisition, development and construction",APG112,9
+1,Chapter 2 - Non-property exposures,APG112,10
+2,Sovereign exposures,APG112,11
+2,Domestic public sector entities,APG112,12
+2,Covered bonds,APG112,13
+2,Corporate exposures,APG112,14
+2,Specialised lending,APG112,15
+3,Project finance,APG112,16
+3,Object finance,APG112,17
+3,Commodities finance,APG112,18
+2,Retail exposures,APG112,19
+3,"'Buy now, pay later' products",APG112,20
+3,Motor vehicle exposures,APG112,21
+2,Subordinated debt,APG112,22
+2,Equity,APG112,23
+2,Leases,APG112,24
+2,Exposures through a third party,APG112,25
+2,Exposures with currency mismatch,APG112,26
+1,Chapter 3 - Off-balance sheet commitments,APG112,27
+2,Defining and measuring commitments,APG112,28
+2,Credit conversion factors,APG112,29
+3,Direct credit substitutes,APG112,30
+3,Sale and repurchase agreements and asset sales with recourse,APG112,31
+3,Lending of securities or posting of securities as collateral,APG112,32
+3,"Forward asset purchases, forward deposits and partly paid shares and securities",APG112,33
+3,Other off-balance sheet items that are credit substitutes,APG112,34
+3,"Unsettled securities, commodities and foreign exchange transactions accounted for at settlement date",APG112,35
+3,Other commitments with certain drawdown,APG112,36
+3,Note issuance and revolving underwriting facilities,APG112,37
+3,Performance-related contingencies,APG112,38
+3,Other commitments,APG112,39
+3,Short-term self-liquidating trade letters of credit arising from the movement of goods,APG112,40
+3,Intraday limits,APG112,41
+3,Irrevocable standby commitments under industry support arrangements,APG112,42
+1,Chapter 4 - External credit ratings,APG112,43
+2,Domestic and foreign currency exposures,APG112,44
+2,Implicit government support,APG112,45
+1,Chapter 5 - Credit risk mitigation,APG112,46
+2,Collateralised transactions,APG112,47
+2,Netting,APG112,48
+2,Guarantees,APG112,49
+2,Credit derivatives,APG112,50
+1,Attachment A - Property exposures examples,APG112,51
+1,Attachment B - SME treatment example,APG112,52
+1,Attachment C - Summary of risk weights,APG112,53
+1,About this guide,APG113,1
+1,Glossary,APG113,2
+1,Introduction,APG113,3
+1,Chapter 1 - Governance and oversight,APG113,4
+2,Model risk policy,APG113,5
+2,Independent review,APG113,6
+1,Chapter 2 - Asset classes,APG113,7
+2,Corporate exposures,APG113,8
+3,Income-producing real estate,APG113,9
+3,Large corporate,APG113,10
+3,SME corporate,APG113,11
+3,Public sector entities,APG113,12
+2,Retail exposures,APG113,13
+3,Retail residential mortgage,APG113,14
+3,Qualifying revolving retail,APG113,15
+3,SME retail,APG113,16
+1,Chapter 3 - Ongoing requirements,APG113,17
+1,Chapter 4 - IRB risk-weight functions and components,APG113,18
+2,Supervisory slotting approach for specialised lending,APG113,19
+2,Loss given default estimates,APG113,20
+2,Exposure at default estimates,APG113,21
+2,Use of proxy values for risk components,APG113,22
+2,Treatment of guarantees and credit derivatives,APG113,23
+1,Chapter 5 - Rating system design and operations,APG113,24
+2,Rating philosophy,APG113,25
+2,Rating system operations,APG113,26
+2,Management of rating system underperformance,APG113,27
+2,Data maintenance,APG113,28
+2,Wrong-way risk,APG113,29
+2,Stress tests in the assessment of capital adequacy,APG113,30
+2,Use of internal ratings,APG113,31
+1,Chapter 6 - Risk quantification,APG113,32
+2,Definition of default,APG113,33
+2,Re-aging,APG113,34
+2,Probability of default estimation,APG113,35
+2,Loss given default estimation,APG113,36
+2,Exposure at default estimation,APG113,37
+2,Expected loss estimation,APG113,38
+1,Chapter 7 - Validation of rating systems and risk estimates,APG113,39
+2,Validation analysis,APG113,40
+1,"Chapter 8 - Recognition of collateral, and receivables",APG113,41
+2,Recognition of collateral,APG113,42
+3,Eligible financial receivables,APG113,43
+3,Eligible commercial or residential real estate,APG113,44
+3,Purchased receivables,APG113,45
+1,Attachment A - IRB asset class flowchart,APG113,46
+1,Attachment B - IRB asset class mapping,APG113,47
+1,Attachment C - LGD calculation examples,APG113,48
+2,Example 1: Write-off,APG113,49
+2,Example 2: Full recovery,APG113,50
+1,Attachment D - Initial IRB approval,APG113,51
+2,General expectations for IRB approval,APG113,52
+2,IRB application process,APG113,53
+2,Phased roll-out,APG113,54
+1,About this guide,APG120,1
+1,Glossary,APG120,2
+1,Chapter 1 - Scope and definitions,APG120,3
+2,Scope,APG120,4
+2,Definitions,APG120,5
+3,Securitisation,APG120,6
+3,Resecuritisation exposure,APG120,7
+3,Senior securitisation exposure,APG120,8
+1,Chapter 2 - Separation and disclosure,APG120,9
+2,Separation,APG120,10
+2,Disclosure,APG120,11
+2,Exposures transferred in a securitisation,APG120,12
+2,Legal opinion,APG120,13
+1,Chapter 3 - General capital adequacy requirement,APG120,14
+2,Capital relief securitisation,APG120,15
+2,Funding-only securitisation,APG120,16
+2,Operational requirements for the use of external credit assessments,APG120,17
+2,Information on the underlying collateral supporting securitisation exposures,APG120,18
+2,Spread accounts and similar surplus income arrangements,APG120,19
+2,Unfunded support,APG120,20
+2,Liquidity facilities,APG120,21
+2,Other funding facilities,APG120,22
+2,Treatment of warehouse and similar structures,APG120,23
+2,Securitisation of revolving credit facilities,APG120,24
+2,Basis swaps,APG120,25
+2,Synthetic securitisation,APG120,26
+2,Self-securitisation,APG120,27
+2,Cash collateral,APG120,28
+2,Shared collateral and trust-back agreements,APG120,29
+1,Chapter 4 - Implicit support and other risks,APG120,30
+2,Implicit support,APG120,31
+2,Quantitative and qualitative limits on securitisation activity,APG120,32
+2,Prior notification,APG120,33
+1,Chapter 5 - Risk management framework,APG120,34
+2,Self-assessment,APG120,35
+1,Chapter 6 - Other issues,APG120,36
+2,Purchase of securities issued in a securitisation,APG120,37
+2,Repurchase of exposures out of a pool in a securitisation,APG120,38
+2,Facilities and services,APG120,39
+2,Representations and warranties,APG120,40
+1,Annexure - Regulatory capital calculation,APG120,41
+2,External Ratings-based Approach,APG120,42
+2,Supervisory Formula Approach,APG120,43
+1,About this guide,APG220,1
+1,Glossary,APG220,2
+1,Introduction,APG220,3
+1,Credit risk management framework,APG220,4
+2,Credit risk appetite,APG220,5
+2,Internal risk appetite limits,APG220,6
+2,Credit risk management strategy,APG220,7
+2,Role of the Board,APG220,8
+2,Credit risk management function,APG220,9
+2,Credit risk policies and processes,APG220,10
+1,Credit origination,APG220,11
+2,Use of third parties,APG220,12
+2,Credit assessment and approval,APG220,13
+2,Exposures to individuals,APG220,14
+2,Exposures other than to individuals,APG220,15
+2,Collateral and guarantees,APG220,16
+2,Credit approval,APG220,17
+1,Credit administration,APG220,18
+2,Management systems,APG220,19
+2,Monitoring credit risk,APG220,20
+2,Credit risk grading,APG220,21
+2,Concentration risk,APG220,22
+1,Controls over credit risk,APG220,23
+2,Reviews of credit risk management processes,APG220,24
+2,Controls and limits,APG220,25
+2,Remedial action,APG220,26
+1,Non-performing exposures,APG220,27
+1,Restructured exposures,APG220,28
+1,Credit risk and accounting for credit losses,APG220,29
+1,About this guide,APG223,1
+1,Background,APG223,2
+1,Risk management framework,APG223,3
+2,APRA's expectations of an ADI Board for residential mortgage lending,APG223,4
+2,Risk appetite including residential mortgage lending,APG223,5
+2,Oversight and review,APG223,6
+2,Management information systems,APG223,7
+2,Remuneration,APG223,8
+1,Loan origination,APG223,9
+2,Serviceability assessments,APG223,10
+2,"Assessment and verification of income, living expenses and other debt commitments",APG223,11
+2,Overrides,APG223,12
+2,Other expectations with respect to loan origination by third parties,APG223,13
+2,Scorecard approvals,APG223,14
+1,Specific loan types,APG223,15
+2,Interest-only loans,APG223,16
+2,Foreign currency loans,APG223,17
+2,Loans with non-standard/alternative documentation,APG223,18
+2,Reverse mortgages,APG223,19
+2,Home equity lines-of-credit,APG223,20
+2,Loans to self-managed superannuation funds,APG223,21
+1,Security valuation,APG223,22
+2,Valuation methods,APG223,23
+2,Loan-to-valuation ratios,APG223,24
+2,Guarantors,APG223,25
+1,Hardship loans and collections,APG223,26
+1,Stress testing,APG223,27
+1,Lenders mortgage insurance,APG223,28
+1,Glossary,APG223,29
+,,,
+,,,
+1,About this guide,APG210,1
+1,Chapter 1 - Liquidity risk management,APG210,2
+2,Liquidity risk appetite and tolerance,APG210,3
+2,Future cash flows of assets and liabilities,APG210,4
+2,Contingency liquidity demand from off balance sheet positions,APG210,5
+3,Special purpose vehicles,APG210,6
+3,Financial derivatives,APG210,7
+3,Guarantees and commitments,APG210,8
+2,Currencies in which an ADI is active,APG210,9
+2,"Correspondent, custody and settlement activities",APG210,10
+2,Measurement tools,APG210,11
+2,Intraday liquidity,APG210,12
+2,Funding and liquidity transfer pricing,APG210,13
+2,Funding strategy,APG210,14
+2,Contingency funding plan,APG210,15
+2,Retail run contingency plan,APG210,16
+1,Chapter 2 - Liquidity coverage ratio,APG210,17
+2,Stress testing,APG210,18
+2,Liquid asset diversification,APG210,19
+2,The Committed Liquidity Facility,APG210,20
+3,Size and composition of the CLF,APG210,21
+3,Inclusion of the CLF in the LCR scenario,APG210,22
+3,CLF utilisation,APG210,23
+2,CLF-eligible debt securities,APG210,24
+2,Retail deposits,APG210,25
+3,Modelling the minimum 31-day notice period deposits,APG210,26
+3,Intermediated deposits – look-through approach,APG210,27
+3,Small to medium enterprise (SME) deposits,APG210,28
+3,Operational deposits,APG210,29
+3,Derivative transactions – collateral,APG210,30
+3,Treatment of placements with a branch by its head office,APG210,31
+3,Contingent funding obligations – buyback of debt securities,APG210,32
+3,Letters of credit and other trade finance instruments,APG210,33
+1,Chapter 3 - Minimum liquidity holdings approach,APG210,34
+2,ADI deposits as MLH eligible assets,APG210,35
+2,Operational capacity to liquidate MLH assets,APG210,36
+2,Liquid assets diversification,APG210,37
+1,Chapter 4 - Net stable funding ratio,APG210,38
+2,Interdependent assets and liabilities,APG210,39

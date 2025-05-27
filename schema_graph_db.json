@@ -1,0 +1,355 @@
+{
+  "version": "1.2.0",
+  "description": "Graph database schema focused purely on structural relationships. Content stored in Vector DB, referenced by IDs.",
+  "node_types": {
+    "Chunk": {
+      "description": "References to vector DB entries - no content duplication",
+      "required_properties": {
+        "chunk_id": {
+          "type": "string",
+          "description": "Foreign key reference to vector DB chunk_id",
+          "format": "uuid",
+          "indexed": true,
+          "unique": true
+        },
+        "node_type": {
+          "type": "string",
+          "const": "Chunk"
+        }
+      },
+      "optional_properties": {
+        "created_at": {
+          "type": "datetime",
+          "description": "When this node was created in graph DB"
+        },
+        "updated_at": {
+          "type": "datetime", 
+          "description": "When this node was last updated"
+        }
+      }
+    },
+    "Document": {
+      "description": "Document-level nodes - references to vector DB documents",
+      "required_properties": {
+        "document_id": {
+          "type": "string",
+          "description": "Foreign key reference to vector DB document_id",
+          "format": "uuid",
+          "indexed": true,
+          "unique": true
+        },
+        "node_type": {
+          "type": "string",
+          "const": "Document"
+        }
+      },
+      "optional_properties": {
+        "created_at": {
+          "type": "datetime",
+          "description": "When this document node was created"
+        },
+        "updated_at": {
+          "type": "datetime",
+          "description": "When this document node was last updated"
+        }
+      }
+    },
+    "Section": {
+      "description": "Hierarchical sections within documents - may not have vector DB equivalent",
+      "required_properties": {
+        "section_id": {
+          "type": "string",
+          "format": "uuid",
+          "indexed": true,
+          "unique": true
+        },
+        "node_type": {
+          "type": "string",
+          "const": "Section"
+        },
+        "section_name": {
+          "type": "string",
+          "description": "Name/title of the section",
+          "max_length": 255
+        }
+      },
+      "optional_properties": {
+        "level": {
+          "type": "integer",
+          "description": "Hierarchical depth within document",
+          "min": 1,
+          "max": 10
+        },
+        "parent_document_id": {
+          "type": "string",
+          "description": "Reference to parent document",
+          "format": "uuid"
+        },
+        "section_order": {
+          "type": "integer",
+          "description": "Order within parent container",
+          "min": 0
+        },
+        "created_at": {
+          "type": "datetime",
+          "description": "When this section was created"
+        },
+        "updated_at": {
+          "type": "datetime",
+          "description": "When this section was last updated"
+        }
+      }
+    }
+  },
+  "relationship_types": {
+    "CONTAINS": {
+      "description": "Hierarchical containment relationship",
+      "allowed_connections": [
+        {"from": "Document", "to": "Section"},
+        {"from": "Section", "to": "Section"},
+        {"from": "Section", "to": "TextChunk"},
+        {"from": "Document", "to": "TextChunk"}
+      ],
+      "properties": {
+        "order": {
+          "type": "integer",
+          "description": "Sequential order within container",
+          "min": 0
+        },
+        "created_at": {
+          "type": "datetime",
+          "description": "When this relationship was established"
+        }
+      },
+      "required_properties": ["order"]
+    },
+    "REFERENCES": {
+      "description": "Cross-references between chunks",
+      "allowed_connections": [
+        {"from": "Chunk", "to": "Chunk"},
+        {"from": "Chunk", "to": "Section"},
+        {"from": "Section", "to": "Chunk"}
+      ],
+      "properties": {
+        "reference_type": {
+          "type": "string",
+          "enum": ["cross_reference"],
+          "description": "Type of cross-reference relationship"
+        },
+        "confidence": {
+          "type": "float",
+          "description": "Confidence score for the reference relationship",
+          "min": 0.0,
+          "max": 1.0
+        },
+        "created_at": {
+          "type": "datetime",
+          "description": "When this reference was identified"
+        },
+        "created_by": {
+          "type": "string",
+          "enum": ["system", "user", "llm"],
+          "description": "Source that created this reference"
+        }
+      },
+      "required_properties": []
+    },
+    "SIMILAR": {
+      "description": "Semantic or structural similarity between chunks",
+      "allowed_connections": [
+        {"from": "Chunk", "to": "Chunk"}
+      ],
+      "properties": {
+        "similarity_score": {
+          "type": "float",
+          "description": "Similarity score between chunks",
+          "min": 0.0,
+          "max": 1.0
+        },
+        "similarity_type": {
+          "type": "string",
+          "enum": ["semantic", "structural", "topical", "temporal", null],
+          "description": "Type of similarity measure used"
+        },
+        "embedding_model": {
+          "type": "string",
+          "description": "Model used to calculate similarity",
+          "max_length": 100
+        },
+        "threshold": {
+          "type": "float",
+          "description": "Minimum threshold used for this similarity",
+          "min": 0.0,
+          "max": 1.0
+        },
+        "created_at": {
+          "type": "datetime",
+          "description": "When similarity was calculated"
+        },
+        "expires_at": {
+          "type": "datetime",
+          "description": "When this similarity calculation expires (for model updates)"
+        }
+      },
+      "required_properties": ["similarity_score"]
+    },
+    "TOPIC_GROUP": {
+      "description": "Groups chunks that belong to the same topic cluster",
+      "allowed_connections": [
+        {"from": "Chunk", "to": "Chunk"},
+        {"from": "Section", "to": "Chunk"}
+      ],
+      "properties": {
+        "topic_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique identifier for the topic group"
+        },
+        "topic_name": {
+          "type": "string",
+          "description": "Human-readable name of the topic",
+          "max_length": 100
+        },
+        "topic_keywords": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Key terms that characterize this topic"
+        },
+        "coherence_score": {
+          "type": "float",
+          "description": "Topic coherence score",
+          "min": 0.0,
+          "max": 1.0
+        },
+        "membership_score": {
+          "type": "float",
+          "description": "How strongly the chunk belongs to this topic",
+          "min": 0.0,
+          "max": 1.0
+        },
+        "algorithm": {
+          "type": "string",
+          "enum": ["lda", "bertopic", "top2vec", "hdbscan", "custom"],
+          "description": "Algorithm used for topic modeling"
+        },
+        "model_parameters": {
+          "type": "object",
+          "description": "Parameters used in the topic modeling"
+        },
+        "created_at": {
+          "type": "datetime",
+          "description": "When this topic group was created"
+        },
+        "updated_at": {
+          "type": "datetime",
+          "description": "When this topic group was last updated"
+        }
+      },
+      "required_properties": ["topic_id", "algorithm", "coherence_score", "membership_score"]
+    }
+  },
+  "indexes": [
+    {"fields": ["chunk_id"], "type": "unique"},
+    {"fields": ["document_id"], "type": "unique"},
+    {"fields": ["section_id"], "type": "unique"},
+    {"fields": ["node_type"], "type": "hash"},
+    {"fields": ["node_type", "created_at"], "type": "composite"},
+    {"fields": ["parent_document_id"], "type": "btree"},
+    {"fields": ["similarity_score"], "type": "btree"},
+    {"fields": ["reference_type"], "type": "hash"},
+    {"fields": ["expires_at"], "type": "btree"}
+  ],
+  "constraints": [
+    {
+      "name": "unique_chunk_references",
+      "type": "uniqueness",
+      "applies_to": "TextChunk.chunk_id",
+      "description": "Ensures each chunk ID is unique"
+    },
+    {
+      "name": "unique_topic_groups",
+      "type": "uniqueness",
+      "applies_to": "TOPIC_GROUP.topic_id",
+      "description": "Ensures each topic group has a unique ID"
+    },
+    {
+      "name": "valid_topic_coherence",
+      "type": "range",
+      "applies_to": "TOPIC_GROUP.coherence_score",
+      "min": 0.0,
+      "max": 1.0,
+      "description": "Ensures topic coherence scores are valid probabilities"
+    },
+    {
+      "name": "valid_membership_score",
+      "type": "range",
+      "applies_to": "TOPIC_GROUP.membership_score",
+      "min": 0.0,
+      "max": 1.0,
+      "description": "Ensures topic membership scores are valid probabilities"
+    },
+    {
+      "name": "unique_document_references", 
+      "type": "uniqueness",
+      "applies_to": "Document.document_id",
+      "description": "Each vector DB document can only have one graph node"
+    },
+    {
+      "name": "valid_hierarchy",
+      "type": "relationship_constraint",
+      "rule": "Document nodes cannot have incoming CONTAINS relationships"
+    },
+    {
+      "name": "no_self_references",
+      "type": "relationship_constraint", 
+      "rule": "Nodes cannot have relationships to themselves"
+    },
+    {
+      "name": "valid_section_hierarchy",
+      "type": "relationship_constraint",
+      "rule": "Section level must be consistent with CONTAINS relationships"
+    },
+    {
+      "name": "foreign_key_chunk_id",
+      "type": "foreign_key",
+      "description": "chunk_id must exist in vector_db.documents",
+      "enforcement": "application_layer"
+    },
+    {
+      "name": "foreign_key_document_id",
+      "type": "foreign_key", 
+      "description": "document_id must exist in vector_db.metadata",
+      "enforcement": "application_layer"
+    }
+  ],
+  "data_lifecycle": {
+    "similarity_expiration": {
+      "description": "SIMILAR relationships should be refreshed when embedding models change",
+      "default_ttl": "90 days",
+      "cleanup_policy": "delete_expired"
+    },
+    "orphan_cleanup": {
+      "description": "Remove graph nodes when vector DB references are deleted",
+      "validation_frequency": "daily",
+      "action": "soft_delete_with_audit"
+    }
+  },
+  "query_optimization": {
+    "materialized_views": [
+      {
+        "name": "document_structure",
+        "description": "Pre-computed document hierarchies for fast traversal",
+        "refresh": "on_demand"
+      },
+      {
+        "name": "chunk_neighborhoods", 
+        "description": "Chunks with their immediate relationships",
+        "refresh": "hourly"
+      }
+    ],
+    "caching_strategy": {
+      "frequently_accessed_subgraphs": "1 hour TTL",
+      "similarity_results": "24 hours TTL"
+    }
+  }
+}

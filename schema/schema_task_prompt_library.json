@@ -1,0 +1,133 @@
+{
+    "version": "1.0.0",
+    "description": "Schema for prompt template database",
+    "collections": {
+      "task_prompt_templates": {
+        "required_fields": {
+          "prompt_id": {
+            "type": "string",
+            "description": "Unique identifier for the prompt template",
+            "pattern": "^prompt_[0-9]{4}$",
+            "indexed": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description of the prompt's purpose",
+            "max_length": 200
+          },
+          "index": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Keywords for categorizing and searching prompts",
+            "min_items": 1
+          },
+          "components": {
+            "type": "object",
+            "description": "Core prompt structure components",
+            "properties": {
+              "role": {
+                "type": "string",
+                "description": "Professional role the prompt is written for",
+                "indexed": true
+              },
+              "task": {
+                "type": "string",
+                "description": "Primary action to be performed"
+              },
+              "purpose": {
+                "type": "string",
+                "description": "Goal or intended outcome of the prompt"
+              },
+              "audience": {
+                "type": "string",
+                "description": "Target audience for the output"
+              },
+              "context": {
+                "type": "string",
+                "description": "Background information and scenario details",
+                "max_length": 500
+              },
+              "principles": {
+                "type": "string", 
+                "description": "Guiding principles or constraints",
+                "optional": true
+              },
+              "instructions": {
+                "type": "string",
+                "description": "Specific tasks or steps to follow"
+              },
+              "response_format": {
+                "type": "string",
+                "description": "Expected structure of the response"
+              },
+              "iteration": {
+                "type": "string",
+                "enum": ["yes", "no"],
+                "description": "Whether the prompt allows iteration",
+                "default": "no"
+              }
+            },
+            "required": ["role", "task", "purpose", "audience", "instructions", "response_format"]
+          }
+        },
+        "optional_fields": {
+          "created_at": {
+            "type": "date",
+            "description": "Date when prompt was created"
+          },
+          "updated_at": {
+            "type": "date",
+            "description": "Date when prompt was last updated"
+          },
+          "created_by": {
+            "type": "string",
+            "description": "User who created the prompt"
+          },
+          "usage_count": {
+            "type": "integer",
+            "description": "Number of times this prompt has been used",
+            "min": 0,
+            "default": 0
+          },
+          "average_rating": {
+            "type": "number",
+            "description": "Average effectiveness rating",
+            "min": 0,
+            "max": 5,
+            "default": 0
+          },
+          "category": {
+            "type": "string",
+            "enum": ["development", "documentation", "analysis", "security", "research", "other"],
+            "description": "Primary category of the prompt",
+            "default": "other"
+          }
+        },
+        "indexes": [
+          {"fields": ["prompt_id"], "type": "unique"},
+          {"fields": ["components.role"], "type": "btree"},
+          {"fields": ["index"], "type": "array"},
+          {"fields": ["category", "average_rating"], "type": "composite"}
+        ]
+      },
+      "task_prompt_versions": {
+        "required_fields": {
+          "version_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier for this prompt version"
+          },
+          "created_at": {
+            "type": "date",
+            "description": "Date when version was created"
+          }
+        },
+        "optional_fields": {
+          "created_by": {
+            "type": "string",
+            "description": "User who created this version"
+          }
+        }
+      }
+    }
+}

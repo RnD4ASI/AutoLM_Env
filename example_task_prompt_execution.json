@@ -1,0 +1,61 @@
+{
+    "node_1":{
+        "prompt_0004": {
+            "description": "security_audit",
+            "index": ["security", "audit", "compliance", "security"],
+            "components": {
+                "role": "Security Auditor",
+                "purpose": "Conduct comprehensive security audit of system infrastructure",
+                "task": "Perform security audit of cloud infrastructure and application security controls",
+                "audience": "Security team, DevOps team, and management",
+                "instructions": "Evaluate security across infrastructure configuration, access controls, data encryption, network security, compliance requirements, incident response procedures, and security monitoring",
+                "context": "AWS cloud infrastructure with SOC 2, GDPR, and ISO 27001 compliance requirements, critical assets include customer data, payment processing, and authentication system",
+                "response_format": "Executive summary, findings with category, severity, description, risk, recommendation, and compliance impact, compliance status, and remediation plan",
+                "iteration": "yes"
+            }
+        }
+    },
+    "node_2":{
+        "prompt_0005": {
+            "description": "user_research",
+            "index": ["user research", "ux research", "user experience research", "user experience research"],
+            "components": {
+                "role": "UX Researcher",
+                "purpose": "Evaluate user experience and gather insights for product improvement",
+                "task": "Conduct user research to evaluate the usability of a new mobile application feature",
+                "audience": "Product team, designers, and developers",
+                "instruction": "Conduct research including user interview sessions, usability testing, task completion analysis, user satisfaction measurement, pain point identification, feature usage analysis, and improvement recommendations",
+                "context": "Mobile banking app with peer-to-peer payments feature, targeting young professionals, students, and small business owners, using think-aloud protocol, task analysis, and satisfaction surveys",
+                "response_format": "Executive summary, methodology, findings with category, observation, frequency, impact, and user quotes, metrics, and recommendations",
+                "iteration": "yes"
+            }
+        }
+    },
+    "node_3":{
+        "prompt_0006": {
+            "description": "code_review",
+            "index": ["code review", "python", "security", "performance", "best practices", "quality assurance"],
+            "components": {
+                "role": "Senior Software Engineer",
+                "task": "Review the provided Python code for quality, security vulnerabilities, and performance issues",
+                "purpose": "Ensure code quality, identify potential issues, and maintain high standards of software development",
+                "audience": "Development team members and project maintainers",
+                "context": "Open source Python project using FastAPI framework, following GitFlow and CI/CD practices with a team of 5-10 developers",
+                "principles": "Follow PEP 8, prioritize security, optimize performance, maintain readability, ensure documentation",
+                "instructions": "Analyze code style and PEP 8 compliance. Identify security vulnerabilities. Assess performance bottlenecks. Review design patterns. Check test coverage. Evaluate documentation.",
+                "response_format": "Summary of findings followed by detailed issues list with type, severity, location, description, and recommendation. Include quality, security, and performance scores.",
+                "iteration": "yes"
+            }
+        }
+    },
+    "edges": [
+    {
+      "source": "node_1",
+      "target": "node_2"
+    },
+    {
+      "source": "node_1",
+      "target": "node_3"
+    }
+    ]
+}

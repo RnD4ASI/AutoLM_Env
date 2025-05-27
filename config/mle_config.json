@@ -1,0 +1,918 @@
+{
+    "version": "1.0.0",
+    "author": "Hello",
+    "description": "Machine Learning Engineering configuration for task-type and confidence-level based model selection",
+    
+    "defaults": {
+      "model_fallback_order": ["azure_openai", "anthropic", "huggingface"],
+      "topology_fallback_order": ["recursive_chain_of_thought", "chain_of_thought", "socratic_dialogue", "best_of_n_selection", "best_of_n_synthesis", "ensemble_weighted_voting", "multipath_disambiguation", "self_reflection", "direct"],
+      "temperature_fallback_order": [0.3, 0.5, 0.7, 0.9],
+      "prompt_optimization_fallback_order": ["genetic_algorithm", "disambiguation", "prompt_reasoning", "prompt_persona_search"]
+    },
+    "llm_method_selection": {
+      "deduction": {
+        "high": {
+          "description": "Complex logical deduction requiring multi-step reasoning",
+          "method": {
+            "prompt_optimization": "genetic_algorithm",
+            "model_provider": "azure_openai",
+            "model_name": "gpt-4o",
+            "tts_topology": "recursive_chain_of_thought",
+            "parameters": {
+              "temperature": 0.3,
+              "num_recursive_steps": 3,
+              "reasoning_depth": 2
+            },
+            "fallback_models": ["anthropic"]
+          }
+        },
+        "medium": {
+          "description": "Moderate logical deduction with clear problem structure",
+          "method": {
+            "prompt_optimization": "disambiguation",
+            "model_provider": "azure_openai",
+            "model_name": "gpt-4o-mini",
+            "tts_topology": "chain_of_thought",
+            "parameters": {
+              "temperature": 0.5
+            },
+            "fallback_models": ["huggingface"]
+          }
+        },
+        "low": {
+          "description": "Simple deduction with straightforward logic",
+          "method": {
+            "prompt_optimization": "none",
+            "model_provider": "huggingface",
+            "model_name": "Qwen2.5-7B",
+            "tts_topology": "direct",
+            "parameters": {
+              "temperature": 0.7
+            },
+            "fallback_models": ["azure_openai"]
+          }
+        }
+      },
+      "documentation": {
+        "high": {
+          "description": "Comprehensive technical documentation requiring domain expertise",
+          "method": {
+            "prompt_optimization": "self_reflection",
+            "model_provider": "anthropic",
+            "model_name": "claude-3-opus",
+            "tts_topology": "hierarchical_decomposition",
+            "parameters": {
+              "temperature": 0.4
+            },
+            "fallback_models": ["azure_openai"]
+          }
+        },
+        "medium": {
+          "description": "Standard documentation with clear structure",
+          "method": {
+            "prompt_optimization": "none",
+            "model_provider": "azure_openai",
+            "model_name": "gpt-4o",
+            "tts_topology": "self_reflection",
+            "parameters": {
+              "temperature": 0.5
+            },
+            "fallback_models": ["anthropic"]
+          }
+        },
+        "low": {
+          "description": "Basic documentation with simple formatting",
+          "method": {
+            "prompt_optimization": "none",
+            "model_provider": "huggingface",
+            "model_name": "Qwen2.5-7B",
+            "tts_topology": "direct",
+            "parameters": {
+              "temperature": 0.6
+            },
+            "fallback_models": ["azure_openai"]
+          }
+        }
+      },
+      "classification": {
+        "high": {
+          "description": "Complex multi-class classification with ambiguous boundaries",
+          "method": {
+            "prompt_optimization": "ensemble_weighted_voting",
+            "model_provider": "azure_openai",
+            "model_name": "gpt-4o",
+            "tts_topology": "best_of_n_selection",
+            "parameters": {
+              "temperature": 0.2,
+              "num_variations": 3,
+              "selection_method": "similarity"
+            },
+            "fallback_models": ["anthropic"]
+          }
+        },
+        "medium": {
+          "description": "Standard classification with clear categories",
+          "method": {
+            "prompt_optimization": "none",
+            "model_provider": "azure_openai",
+            "model_name": "gpt-4o-mini",
+            "tts_topology": "best_of_n_synthesis",
+            "parameters": {
+              "temperature": 0.3
+            },
+            "fallback_models": ["huggingface"]
+          }
+        },
+        "low": {
+          "description": "Simple binary or few-class classification",
+          "method": {
+            "prompt_optimization": "none",
+            "model_provider": "huggingface",
+            "model_name": "Qwen2.5-1.5B",
+            "tts_topology": "direct",
+            "parameters": {
+              "temperature": 0.1
+            },
+            "fallback_models": ["azure_openai"]
+          }
+        }
+      },
+      "clustering": {
+        "high": {
+          "description": "Complex clustering requiring domain knowledge and multiple criteria",
+          "method": {
+            "prompt_optimization": "multipath_disambiguation",
+            "model_provider": "anthropic",
+            "model_name": "claude-3-sonnet",
+            "tts_topology": "socratic_dialogue",
+            "parameters": {
+              "temperature": 0.4
+            },
+            "fallback_models": ["azure_openai"]
+          }
+        },
+        "medium": {
+          "description": "Standard clustering with clear similarity metrics",
+          "method": {
+            "prompt_optimization": "none",
+            "model_provider": "azure_openai",
+            "model_name": "gpt-4o",
+            "tts_topology": "chain_of_thought",
+            "parameters": {
+              "temperature": 0.5
+            },
+            "fallback_models": ["anthropic"]
+          }
+        },
+        "low": {
+          "description": "Simple clustering with obvious groupings",
+          "method": {
+            "prompt_optimization": "none",
+            "model_provider": "huggingface",
+            "model_name": "Qwen2.5-7B",
+            "tts_topology": "direct",
+            "parameters": {
+              "temperature": 0.6
+            },
+            "fallback_models": ["azure_openai"]
+          }
+        }
+      },
+      "induction": {
+        "high": {
+          "description": "Complex pattern recognition and generalization from limited examples",
+          "method": {
+            "prompt_optimization": "genetic_algorithm",
+            "model_provider": "azure_openai",
+            "model_name": "gpt-4o",
+            "tts_topology": "atom_of_thought",
+            "parameters": {
+              "temperature": 0.6
+            },
+            "fallback_models": ["anthropic"]
+          }
+        },
+        "medium": {
+          "description": "Moderate pattern recognition with some examples",
+          "method": {
+            "prompt_optimization": "self_reflection",
+            "model_provider": "azure_openai",
+            "model_name": "gpt-4o-mini",
+            "tts_topology": "multimodel_debate_solo",
+            "parameters": {
+              "temperature": 0.7
+            },
+            "fallback_models": ["huggingface"]
+          }
+        },
+        "low": {
+          "description": "Simple pattern recognition with clear examples",
+          "method": {
+            "prompt_optimization": "none",
+            "model_provider": "huggingface",
+            "model_name": "Qwen2.5-7B",
+            "tts_topology": "chain_of_thought",
+            "parameters": {
+              "temperature": 0.8
+            },
+            "fallback_models": ["azure_openai"]
+          }
+        }
+      },
+      "entity_detection": {
+        "high": {
+          "description": "Complex named entity recognition with domain-specific entities",
+          "method": {
+            "prompt_optimization": "prompt_disambiguation",
+            "model_provider": "azure_openai",
+            "model_name": "gpt-4o",
+            "tts_topology": "regenerative_majority_synthesis",
+            "parameters": {
+              "temperature": 0.2
+            },
+            "fallback_models": ["anthropic"]
+          }
+        },
+        "medium": {
+          "description": "Standard entity detection with common entity types",
+          "method": {
+            "prompt_optimization": "none",
+            "model_provider": "azure_openai",
+            "model_name": "gpt-4o-mini",
+            "tts_topology": "best_of_n_selection",
+            "parameters": {
+              "temperature": 0.1
+            },
+            "fallback_models": ["huggingface"]
+          }
+        },
+        "low": {
+          "description": "Simple entity detection with well-defined entity types",
+          "method": {
+            "prompt_optimization": "none",
+            "model_provider": "huggingface",
+            "model_name": "Qwen2.5-1.5B",
+            "tts_topology": "direct",
+            "parameters": {
+              "temperature": 0.1
+            },
+            "fallback_models": ["azure_openai"]
+          }
+        }
+      }
+    },
+
+    "rag_method_selection": {
+        "factual_retrieval": {
+            "high": {
+                "description": "Complex factual queries requiring comprehensive multi-source verification",
+                "methods": {
+                "QueryProcessor": {
+                    "method": "decompose_query",
+                    "parameters": {
+                    "max_subqueries": 4,
+                    "temperature": 0.5
+                    }
+                },
+                "VectorDBRetrievalProcessor": {
+                    "method": "semantic_search",
+                    "parameters": {
+                    "top_k": 15,
+                    "similarity_threshold": 0.7,
+                    "embedding_model": "Jina-embeddings-v3"
+                    }
+                },
+                "GraphDBRetrievalProcessor": {
+                    "method": "cross_layer_search",
+                    "parameters": {
+                    "layer_weights": {
+                        "content": 1.0,
+                        "structure": 0.8,
+                        "reference": 0.6
+                    }
+                    }
+                },
+                "RerankProcessor": {
+                    "method": "rerank_cross_encoder",
+                    "parameters": {
+                    "batch_size": 16,
+                    "model": "cross-encoder/ms-marco-MiniLM-L-6-v2"
+                    }
+                }
+                },
+                "fallback_methods": ["medium"]
+            },
+            "medium": {
+                "description": "Standard factual queries with moderate complexity",
+                "methods": {
+                "QueryProcessor": {
+                    "method": "rephrase_query",
+                    "parameters": {
+                    "temperature": 0.6,
+                    "variation_count": 2
+                    }
+                },
+                "VectorDBRetrievalProcessor": {
+                    "method": "semantic_search",
+                    "parameters": {
+                    "top_k": 8,
+                    "similarity_threshold": 0.75,
+                    "embedding_model": "Jina-embeddings-v3"
+                    }
+                },
+                "GraphDBRetrievalProcessor": {
+                    "method": "semantic_cluster_search",
+                    "parameters": {
+                    "top_k": 10,
+                    "cluster_threshold": 0.7
+                    }
+                },
+                "RerankProcessor": {
+                    "method": "rerank_reciprocal_rank_fusion",
+                    "parameters": {
+                    "k": 60
+                    }
+                }
+                },
+                "fallback_methods": ["low"]
+            },
+            "low": {
+                "description": "Simple factual queries with direct answers",
+                "methods": {
+                "QueryProcessor": {
+                    "method": "none",
+                    "parameters": {}
+                },
+                "VectorDBRetrievalProcessor": {
+                    "method": "semantic_search",
+                    "parameters": {
+                    "top_k": 5,
+                    "similarity_threshold": 0.8,
+                    "embedding_model": "Jina-embeddings-v3"
+                    }
+                },
+                "GraphDBRetrievalProcessor": {
+                    "method": "lookup_node",
+                    "parameters": {
+                    "include_metadata": true
+                    }
+                },
+                "RerankProcessor": {
+                    "method": "none",
+                    "parameters": {}
+                }
+                },
+                "fallback_methods": ["semantic_only"]
+            }
+        },
+    
+        "analytical_research": {
+            "high": {
+                "description": "Deep analytical research requiring multi-perspective synthesis",
+                "methods": {
+                "QueryProcessor": {
+                    "method": "decompose_query",
+                    "parameters": {
+                    "max_subqueries": 6,
+                    "temperature": 0.7,
+                    "perspective_diversification": true
+                    }
+                },
+                "VectorDBRetrievalProcessor": {
+                    "method": "graph_based_search",
+                    "parameters": {
+                    "search_type": "semantic",
+                    "top_k": 20,
+                    "graph_depth": 3
+                    }
+                },
+                "GraphDBRetrievalProcessor": {
+                    "method": "community_detection",
+                    "parameters": {
+                    "algorithm": "louvain",
+                    "resolution": 1.0,
+                    "min_community_size": 3
+                    }
+                },
+                "RerankProcessor": {
+                    "method": "rerank_cross_encoder",
+                    "parameters": {
+                    "batch_size": 12,
+                    "model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+                    "diversity_factor": 0.3
+                    }
+                }
+                },
+                "fallback_methods": ["medium"]
+            },
+            "medium": {
+                "description": "Standard analytical research with focused scope",
+                "methods": {
+                "QueryProcessor": {
+                    "method": "hypothesize_query",
+                    "parameters": {
+                    "temperature": 0.6,
+                    "hypothesis_count": 2
+                    }
+                },
+                "VectorDBRetrievalProcessor": {
+                    "method": "semantic_search",
+                    "parameters": {
+                    "top_k": 12,
+                    "similarity_threshold": 0.7,
+                    "embedding_model": "Jina-embeddings-v3"
+                    }
+                },
+                "GraphDBRetrievalProcessor": {
+                    "method": "concept_hierarchy_search",
+                    "parameters": {
+                    "max_depth": 3,
+                    "include_siblings": true
+                    }
+                },
+                "RerankProcessor": {
+                    "method": "rerank_cross_encoder",
+                    "parameters": {
+                    "batch_size": 24,
+                    "model": "cross-encoder/ms-marco-MiniLM-L-6-v2"
+                    }
+                }
+                },
+                "fallback_methods": ["low"]
+            },
+            "low": {
+                "description": "Basic analytical queries with simple reasoning",
+                "methods": {
+                "QueryProcessor": {
+                    "method": "rephrase_query",
+                    "parameters": {
+                    "temperature": 0.5,
+                    "variation_count": 1
+                    }
+                },
+                "VectorDBRetrievalProcessor": {
+                    "method": "semantic_search",
+                    "parameters": {
+                    "top_k": 8,
+                    "similarity_threshold": 0.75,
+                    "embedding_model": "Jina-embeddings-v3"
+                    }
+                },
+                "GraphDBRetrievalProcessor": {
+                    "method": "semantic_cluster_search",
+                    "parameters": {
+                    "top_k": 8,
+                    "cluster_threshold": 0.75
+                    }
+                },
+                "RerankProcessor": {
+                    "method": "rerank_reciprocal_rank_fusion",
+                    "parameters": {
+                    "k": 60
+                    }
+                }
+                },
+                "fallback_methods": ["semantic_only"]
+            }
+        },
+    
+        "comparative_analysis": {
+            "high": {
+                "description": "Complex multi-dimensional comparative analysis",
+                "methods": {
+                "QueryProcessor": {
+                    "method": "decompose_query",
+                    "parameters": {
+                    "max_subqueries": 5,
+                    "temperature": 0.6,
+                    "comparison_structure": true
+                    }
+                },
+                "VectorDBRetrievalProcessor": {
+                    "method": "semantic_search",
+                    "parameters": {
+                    "top_k": 18,
+                    "similarity_threshold": 0.65,
+                    "embedding_model": "Jina-embeddings-v3",
+                    "diversity_factor": 0.4
+                    }
+                },
+                "GraphDBRetrievalProcessor": {
+                    "method": "connectivity_search",
+                    "parameters": {
+                    "connectivity_metric": "shortest_path",
+                    "max_nodes": 10,
+                    "include_weights": true
+                    }
+                },
+                "RerankProcessor": {
+                    "method": "rerank_cross_encoder",
+                    "parameters": {
+                    "batch_size": 16,
+                    "model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+                    "comparison_aware": true
+                    }
+                }
+                },
+                "fallback_methods": ["medium"]
+            },
+            "medium": {
+                "description": "Standard comparison between defined entities",
+                "methods": {
+                "QueryProcessor": {
+                    "method": "rephrase_query",
+                    "parameters": {
+                    "temperature": 0.5,
+                    "variation_count": 2,
+                    "comparison_focus": true
+                    }
+                },
+                "VectorDBRetrievalProcessor": {
+                    "method": "semantic_search",
+                    "parameters": {
+                    "top_k": 10,
+                    "similarity_threshold": 0.7,
+                    "embedding_model": "Jina-embeddings-v3"
+                    }
+                },
+                "GraphDBRetrievalProcessor": {
+                    "method": "path_based_search",
+                    "parameters": {
+                    "max_path_length": 3,
+                    "include_edge_weights": true
+                    }
+                },
+                "RerankProcessor": {
+                    "method": "rerank_cross_encoder",
+                    "parameters": {
+                    "batch_size": 32,
+                    "model": "cross-encoder/ms-marco-MiniLM-L-6-v2"
+                    }
+                }
+                },
+                "fallback_methods": ["low"]
+            },
+            "low": {
+                "description": "Simple binary or straightforward comparison",
+                "methods": {
+                "QueryProcessor": {
+                    "method": "none",
+                    "parameters": {}
+                },
+                "VectorDBRetrievalProcessor": {
+                    "method": "semantic_search",
+                    "parameters": {
+                    "top_k": 6,
+                    "similarity_threshold": 0.75,
+                    "embedding_model": "Jina-embeddings-v3"
+                    }
+                },
+                "GraphDBRetrievalProcessor": {
+                    "method": "semantic_cluster_search",
+                    "parameters": {
+                    "top_k": 6,
+                    "cluster_threshold": 0.8
+                    }
+                },
+                "RerankProcessor": {
+                    "method": "rerank_reciprocal_rank_fusion",
+                    "parameters": {
+                    "k": 60
+                    }
+                }
+                },
+                "fallback_methods": ["semantic_only"]
+            }
+        },
+    
+        "exploratory_discovery": {
+            "high": {
+                "description": "Open-ended exploration requiring broad knowledge discovery",
+                "methods": {
+                "QueryProcessor": {
+                    "method": "decompose_query",
+                    "parameters": {
+                    "max_subqueries": 4,
+                    "temperature": 0.8,
+                    "exploration_bias": true
+                    }
+                },
+                "VectorDBRetrievalProcessor": {
+                    "method": "graph_based_search",
+                    "parameters": {
+                    "search_type": "cross_layer",
+                    "top_k": 25,
+                    "graph_depth": 2,
+                    "exploration_radius": 0.6
+                    }
+                },
+                "GraphDBRetrievalProcessor": {
+                    "method": "hypergraph_query",
+                    "parameters": {
+                    "query_type": "knowledge_gap",
+                    "min_cluster_size": 3,
+                    "exploration_depth": 3
+                    }
+                },
+                "RerankProcessor": {
+                    "method": "rerank_cross_encoder",
+                    "parameters": {
+                    "batch_size": 20,
+                    "model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+                    "novelty_bonus": 0.2
+                    }
+                }
+                },
+                "fallback_methods": ["medium"]
+            },
+            "medium": {
+                "description": "Focused exploration within domain boundaries",
+                "methods": {
+                "QueryProcessor": {
+                    "method": "hypothesize_query",
+                    "parameters": {
+                    "temperature": 0.7,
+                    "hypothesis_count": 3,
+                    "exploration_scope": "domain"
+                    }
+                },
+                "VectorDBRetrievalProcessor": {
+                    "method": "semantic_search",
+                    "parameters": {
+                    "top_k": 15,
+                    "similarity_threshold": 0.6,
+                    "embedding_model": "Jina-embeddings-v3",
+                    "diversity_factor": 0.3
+                    }
+                },
+                "GraphDBRetrievalProcessor": {
+                    "method": "community_detection",
+                    "parameters": {
+                    "algorithm": "louvain",
+                    "resolution": 0.8
+                    }
+                },
+                "RerankProcessor": {
+                    "method": "rerank_cross_encoder",
+                    "parameters": {
+                    "batch_size": 24,
+                    "model": "cross-encoder/ms-marco-MiniLM-L-6-v2"
+                    }
+                }
+                },
+                "fallback_methods": ["low"]
+            },
+            "low": {
+                "description": "Limited exploration with guided discovery",
+                "methods": {
+                "QueryProcessor": {
+                    "method": "rephrase_query",
+                    "parameters": {
+                    "temperature": 0.6,
+                    "variation_count": 2
+                    }
+                },
+                "VectorDBRetrievalProcessor": {
+                    "method": "semantic_search",
+                    "parameters": {
+                    "top_k": 10,
+                    "similarity_threshold": 0.7,
+                    "embedding_model": "Jina-embeddings-v3"
+                    }
+                },
+                "GraphDBRetrievalProcessor": {
+                    "method": "semantic_cluster_search",
+                    "parameters": {
+                    "top_k": 10,
+                    "cluster_threshold": 0.7
+                    }
+                },
+                "RerankProcessor": {
+                    "method": "rerank_reciprocal_rank_fusion",
+                    "parameters": {
+                    "k": 60
+                    }
+                }
+                },
+                "fallback_methods": ["semantic_only"]
+            }
+        },
+    
+        "conversational_context": {
+            "high": {
+                "description": "Complex multi-turn conversations with context integration",
+                "methods": {
+                "QueryProcessor": {
+                    "method": "predict_query",
+                    "parameters": {
+                    "context_window": 10,
+                    "temperature": 0.5,
+                    "intent_tracking": true
+                    }
+                },
+                "VectorDBRetrievalProcessor": {
+                    "method": "semantic_search",
+                    "parameters": {
+                    "top_k": 12,
+                    "similarity_threshold": 0.7,
+                    "embedding_model": "Jina-embeddings-v3",
+                    "context_aware": true
+                    }
+                },
+                "GraphDBRetrievalProcessor": {
+                    "method": "temporal_search",
+                    "parameters": {
+                    "conversation_history_integration": true,
+                    "temporal_weight": 0.3
+                    }
+                },
+                "RerankProcessor": {
+                    "method": "rerank_cross_encoder",
+                    "parameters": {
+                    "batch_size": 24,
+                    "model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+                    "conversation_coherence": true
+                    }
+                }
+                },
+                "fallback_methods": ["medium"]
+            },
+            "medium": {
+                "description": "Standard conversational follow-ups with context",
+                "methods": {
+                "QueryProcessor": {
+                    "method": "predict_query",
+                    "parameters": {
+                    "context_window": 5,
+                    "temperature": 0.4
+                    }
+                },
+                "VectorDBRetrievalProcessor": {
+                    "method": "semantic_search",
+                    "parameters": {
+                    "top_k": 8,
+                    "similarity_threshold": 0.75,
+                    "embedding_model": "Jina-embeddings-v3"
+                    }
+                },
+                "GraphDBRetrievalProcessor": {
+                    "method": "semantic_cluster_search",
+                    "parameters": {
+                    "top_k": 8,
+                    "cluster_threshold": 0.75,
+                    "conversation_aware": true
+                    }
+                },
+                "RerankProcessor": {
+                    "method": "rerank_reciprocal_rank_fusion",
+                    "parameters": {
+                    "k": 60
+                    }
+                }
+                },
+                "fallback_methods": ["low"]
+            },
+            "low": {
+                "description": "Simple conversational queries with minimal context",
+                "methods": {
+                "QueryProcessor": {
+                    "method": "rephrase_query",
+                    "parameters": {
+                    "temperature": 0.5,
+                    "variation_count": 1,
+                    "context_integration": true
+                    }
+                },
+                "VectorDBRetrievalProcessor": {
+                    "method": "semantic_search",
+                    "parameters": {
+                    "top_k": 5,
+                    "similarity_threshold": 0.8,
+                    "embedding_model": "Jina-embeddings-v3"
+                    }
+                },
+                "GraphDBRetrievalProcessor": {
+                    "method": "lookup_node",
+                    "parameters": {
+                    "include_metadata": true,
+                    "conversation_context": true
+                    }
+                },
+                "RerankProcessor": {
+                    "method": "none",
+                    "parameters": {}
+                }
+                },
+                "fallback_methods": ["semantic_only"]
+            }
+        },
+    
+        "temporal_analysis": {
+            "high": {
+                "description": "Complex temporal pattern analysis and trend identification",
+                "methods": {
+                "QueryProcessor": {
+                    "method": "decompose_query",
+                    "parameters": {
+                    "max_subqueries": 4,
+                    "temperature": 0.6,
+                    "temporal_extraction": true
+                    }
+                },
+                "VectorDBRetrievalProcessor": {
+                    "method": "semantic_search",
+                    "parameters": {
+                    "top_k": 20,
+                    "similarity_threshold": 0.65,
+                    "embedding_model": "Jina-embeddings-v3",
+                    "temporal_weighting": true
+                    }
+                },
+                "GraphDBRetrievalProcessor": {
+                    "method": "temporal_search",
+                    "parameters": {
+                    "time_window": "adaptive",
+                    "pattern_detection": true,
+                    "trend_analysis": true
+                    }
+                },
+                "RerankProcessor": {
+                    "method": "rerank_cross_encoder",
+                    "parameters": {
+                    "batch_size": 16,
+                    "model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+                    "temporal_relevance": true
+                    }
+                }
+                },
+                "fallback_methods": ["medium"]
+            },
+            "medium": {
+                "description": "Standard temporal queries with time-based filtering",
+                "methods": {
+                "QueryProcessor": {
+                    "method": "rephrase_query",
+                    "parameters": {
+                    "temperature": 0.5,
+                    "variation_count": 2,
+                    "temporal_focus": true
+                    }
+                },
+                "VectorDBRetrievalProcessor": {
+                    "method": "semantic_search",
+                    "parameters": {
+                    "top_k": 12,
+                    "similarity_threshold": 0.7,
+                    "embedding_model": "Jina-embeddings-v3"
+                    }
+                },
+                "GraphDBRetrievalProcessor": {
+                    "method": "temporal_search",
+                    "parameters": {
+                    "start_date": "auto",
+                    "end_date": "auto"
+                    }
+                },
+                "RerankProcessor": {
+                    "method": "rerank_cross_encoder",
+                    "parameters": {
+                    "batch_size": 32,
+                    "model": "cross-encoder/ms-marco-MiniLM-L-6-v2"
+                    }
+                }
+                },
+                "fallback_methods": ["low"]
+            },
+            "low": {
+                "description": "Simple time-filtered queries",
+                "methods": {
+                "QueryProcessor": {
+                    "method": "none",
+                    "parameters": {}
+                },
+                "VectorDBRetrievalProcessor": {
+                    "method": "semantic_search",
+                    "parameters": {
+                    "top_k": 8,
+                    "similarity_threshold": 0.75,
+                    "embedding_model": "Jina-embeddings-v3"
+                    }
+                },
+                "GraphDBRetrievalProcessor": {
+                    "method": "temporal_search",
+                    "parameters": {
+                    "time_window": "recent"
+                    }
+                },
+                "RerankProcessor": {
+                    "method": "rerank_reciprocal_rank_fusion",
+                    "parameters": {
+                    "k": 60
+                    }
+                }
+                },
+                "fallback_methods": ["semantic_only"]
+            }
+        }
+    }
+}

@@ -1,0 +1,59 @@
+{
+    "system": {
+        "api": {
+            "version": "2023-05-15",
+            "max_attempts": 3,
+            "wait_time": 60
+        },
+        "paths": {
+            "knowledge_base": "db",
+            "source": "data",
+            "meta_prompt_library": "db/prompt/meta_prompt_library.json",
+            "task_prompt_library": "db/prompt/task_prompt_library.json"
+        },
+        "logging_option1": {
+            "level": "INFO",
+            "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            "file": "tmp/log/run_info-{asctime}.log"
+        },
+        "logging_option2":  {
+            "level": "DEBUG",
+            "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            "file": "tmp/log/run_debug-{asctime}.log"
+        },
+        "supported_file_types": [
+            "pdf",
+            "md",
+            "txt",
+            "json",
+            "pkl",
+            "parquet",
+            "csv"
+        ]
+    },
+    "knowledge_base": {
+        "chunking": {
+            "method": "hierarchy",
+            "length_config": {
+                "chunk_size": 1000,
+                "chunk_overlap": 100
+            }
+        },
+        "vector_store": {
+            "embedding_dim": 1536,
+            "similarity_threshold": 0.7,
+            "top_k": 5
+        },
+        "source_filters": {
+            "file_types": [".txt", ".md", ".pdf"],
+            "exclude_patterns": [".*\\.git.*", ".*\\.pyc", ".*__pycache__.*"]
+        },
+        "retrieval": {
+            "type": "hybrid",
+            "weights": {
+                "vector": 0.7,
+                "graph": 0.3
+            }
+        }
+    }
+}

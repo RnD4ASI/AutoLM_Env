@@ -1,0 +1,54 @@
+{
+  "nodes": {
+    "node_1": {
+      "prompt_id": "prompt_0001",
+      "task_summary": "Generate a comprehensive analysis of renewable energy trends in 2025"
+    },
+    "node_2": {
+      "prompt_id": "prompt_0002",
+      "task_summary": "Based on the analysis, identify the top 3 investment opportunities in renewable energy"
+    },
+    "node_3": {
+      "prompt_id": "prompt_0003",
+      "task_summary": "Create a concise executive summary of the analysis and investment opportunities"
+    },
+    "node_4": {
+      "prompt_id": "prompt_0004",
+      "task_summary": "Generate visualizations and data representations that support the analysis"
+    },
+    "node_5": {
+      "prompt_id": "prompt_0005",
+      "task_summary": "Create a final report combining all previous outputs into a cohesive document"
+    },
+    "node_6": {
+      "prompt_id": "prompt_0006",
+      "task_summary": "Identify key entities and their relationships in the analysis"
+    }
+  },
+  "edges": [
+    {
+      "source": "node_1",
+      "target": "node_2"
+    },
+    {
+      "source": "node_1",
+      "target": "node_3"
+    },
+    {
+      "source": "node_2",
+      "target": "node_4"
+    },
+    {
+      "source": "node_3",
+      "target": "node_5"
+    },
+    {
+      "source": "node_4",
+      "target": "node_5"
+    },
+    {
+      "source": "node_5",
+      "target": "node_6"
+    }
+  ]
+}

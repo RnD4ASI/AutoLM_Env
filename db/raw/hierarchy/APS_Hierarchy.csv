@@ -1,0 +1,628 @@
+﻿Level,Heading,File,Index
+1,Authority,APS111,1
+1,Application,APS111,2
+1,Adjustments and exclusions,APS111,3
+1,Previous exercise of discretion,APS111,4
+1,Interpretation,APS111,5
+1,Definitions,APS111,6
+1,Regulatory Capital,APS111,7
+1,Application of fair values,APS111,8
+1,Common Equity Tier 1 Capital,APS111,9
+1,Additional Tier 1 Capital,APS111,10
+1,Tier 2 Capital,APS111,11
+1,Additional Tier 1 Capital or Tier 2 Capital issued overseas by ADIs or subsidiaries,APS111,12
+1,Intra-group capital transactions,APS111,13
+1,Holding of capital instruments in group members by other group members,APS111,14
+1,Attachment A - Use of Fair Values,APS111,15
+2,Systems and controls,APS111,16
+2,Valuation methodologies,APS111,17
+2,Mark-to-market valuation methodologies,APS111,18
+2,Mark-to-model valuation methodologies,APS111,19
+2,Valuation adjustments,APS111,20
+2,Illiquid positions,APS111,21
+2,Independent price verification,APS111,22
+2,Own creditworthiness,APS111,23
+1,Attachment B - Criteria for classification as paid-up ordinary shares,APS111,24
+1,Attachment C - Minority interest and other capital issued out of fully consolidated subsidiaries and is held by third parties,APS111,25
+2,Common Equity Tier 1 Capital (minority interest),APS111,26
+2,Tier 1 Capital,APS111,27
+2,Total Capital,APS111,28
+1,Attachment D - Regulatory adjustments,APS111,29
+2,General rules for regulatory adjustments,APS111,30
+2,Equity exposures and other capital support provided to financial institutions,APS111,31
+2,Holdings of own capital instruments,APS111,32
+2,Regulatory adjustments to Common Equity Tier 1 Capital,APS111,33
+3,Asset impairment,APS111,34
+3,Cash flow hedge reserve,APS111,35
+3,Covered bonds excess assets in cover pools,APS111,36
+3,Deferred tax assets and deferred tax liabilities,APS111,37
+3,Equity exposures and other capital support provided to commercial (non-financial) entities,APS111,38
+3,Gains and losses arising from changes in own creditworthiness,APS111,39
+3,Goodwill and other intangibles,APS111,40
+3,Guarantees,APS111,41
+3,Industry support schemes,APS111,42
+3,Securitisation,APS111,43
+3,Shortfall in provisions for credit losses,APS111,44
+3,Provisions,APS111,45
+3,Superannuation funds,APS111,46
+3,Other adjustments,APS111,47
+1,Attachment E - Criteria for inclusion in Additional Tier 1 Capital,APS111,48
+1,Attachment F - Loss absorption requirements: Additional Tier 1 Capital,APS111,49
+1,Attachment G - Criteria for inclusion in Tier 2 Capital,APS111,50
+1,Attachment H - Loss absorption at the point of non-viability: Additional Tier 1 and Tier 2 Capital instruments,APS111,51
+1,Attachment I - Mutual equity interests,APS111,52
+1,Authority,APS110,1
+1,Application,APS110,2
+1,Interpretation,APS110,3
+1,Definitions,APS110,4
+1,Adjustments and exclusions,APS110,5
+1,Previous exercise of discretion,APS110,6
+1,Responsibility for capital management,APS110,7
+1,Internal Capital Adequacy Assessment Process,APS110,8
+1,Minimum risk-based capital adequacy requirements,APS110,9
+1,Capital floor,APS110,10
+1,Capital conservation buffer,APS110,11
+1,Countercyclical capital buffer,APS110,12
+1,Minimum dollar amount of capital,APS110,13
+1,Minimum leverage ratio requirement,APS110,14
+1,Reductions in capital,APS110,15
+1,Notification requirements,APS110,16
+1,Attachment A - Risk-based regulatory capital ratios,APS110,17
+2,Transition arrangements for market risk capital,APS110,18
+1,Attachment B - Constraints on capital distributions,APS110,19
+1,Attachment C - Countercyclical capital buffer,APS110,20
+1,Attachment D - Leverage ratio,APS110,21
+2,On-balance sheet exposures,APS110,22
+3,Unsettled trades,APS110,23
+3,Cash pooling,APS110,24
+2,Non-market-related off-balance sheet exposures,APS110,25
+2,Derivative exposures,APS110,26
+3,Treatment of derivatives,APS110,27
+4,Calculation of the replacement cost,APS110,28
+4,Calculation of the potential future exposure,APS110,29
+3,Treatment of related collateral,APS110,30
+3,Treatment of cash variation margin,APS110,31
+3,Treatment of clearing services,APS110,32
+3,Additional treatment for written credit derivatives,APS110,33
+2,Securities financing transaction exposures,APS110,34
+3,ADI acting as a principal,APS110,35
+3,ADI acting as an agent,APS110,36
+1,Authority,APS120,1
+1,Application,APS120,2
+1,Interpretation,APS120,3
+1,Scope,APS120,4
+1,Definitions,APS120,5
+1,Separation and disclosure,APS120,6
+2,Separation,APS120,7
+2,Requirements for an SPV,APS120,8
+2,Disclosure,APS120,9
+1,Exposures transferred in a securitisation,APS120,10
+1,Legal opinion,APS120,11
+1,General capital adequacy requirements,APS120,12
+2,Securitisation start-up costs,APS120,13
+2,Spread accounts and similar surplus income arrangements,APS120,14
+2,Regulatory capital relief,APS120,15
+2,Funding-only securitisation,APS120,16
+2,Synthetic securitisation,APS120,17
+2,Treatment of securitisation exposures,APS120,18
+2,Treatment of credit risk mitigation for securitisation exposures,APS120,19
+2,Maturity mismatches,APS120,20
+2,Overlapping exposures,APS120,21
+2,Operational requirements for the use of external credit assessments,APS120,22
+2,Operational requirements for inferred ratings,APS120,23
+2,Due diligence requirements,APS120,24
+2,Overcollateralisation arrangement,APS120,25
+2,Capital charge cap,APS120,26
+2,Risk-weight cap for senior securitisation exposures,APS120,27
+2,Cash collateral arrangements,APS120,28
+2,Redraws and further advances to customers,APS120,29
+2,Shared collateral,APS120,30
+1,Implicit support and other risks,APS120,31
+1,Risk management framework,APS120,32
+1,Self-assessment,APS120,33
+1,Transitional provisions,APS120,34
+1,Prior notification,APS120,35
+1,Adjustments and exclusions,APS120,36
+1,Previous exercise of discretion,APS120,37
+1,Attachment A - Operational requirements for regulatory capital relief,APS120,38
+2,Significant credit risk transfer,APS120,39
+2,Purchase of securities issued in a securitisation,APS120,40
+2,Repurchase of exposures out of the pool in a securitisation,APS120,41
+2,Permanency of funding,APS120,42
+2,Securitisation of revolving credit facilities,APS120,43
+1,Attachment B - Operational requirements for funding-only securitisation,APS120,44
+2,Non-senior securities issued in a securitisation,APS120,45
+2,Purchase of securities issued in a securitisation,APS120,46
+2,Repurchase of exposures out of the pool held in a securitisation,APS120,47
+2,Securitisation of revolving credit facilities,APS120,48
+3,Revolving period of securitisation,APS120,49
+3,Scheduled or early amortisation and similar provisions,APS120,50
+1,Attachment C - Regulatory capital required for credit risk,APS120,51
+2,External Ratings-based Approach,APS120,52
+3,Short-term ratings,APS120,53
+3,Long-term ratings,APS120,54
+3,Tranche maturity,APS120,55
+3,Tranche thickness,APS120,56
+3,Tranched credit protection,APS120,57
+2,Supervisory Formula Approach,APS120,58
+3,Definition of K_(SA),APS120,59
+3,Definition of delinquent underlying exposures (W),APS120,60
+3,Definition of attachment point (A) and detachment point (D),APS120,61
+3,Capital requirements as calculated under the Supervisory Formula Approach,APS120,62
+2,APRA's discretion where capital requirement is uncertain,APS120,63
+2,"Mapping of rating grades for Standard and Poor's, Moody's and Fitch",APS120,64
+1,Attachment D - Facilities and services,APS120,65
+2,Facilities and services,APS120,66
+2,Liquidity or other funding facilities,APS120,67
+2,Servicer cash advances,APS120,68
+2,Derivatives transactions,APS120,69
+2,Services,APS120,70
+2,Representations and warranties,APS120,71
+1,Authority,APS121,1
+1,Application and commencement,APS121,2
+1,Interpretation,APS121,3
+1,Scope,APS121,4
+1,Definitions,APS121,5
+1,Adjustments and exclusions,APS121,6
+1,Previous exercise of discretion,APS121,7
+1,Key principles,APS121,8
+1,Covered bond special purpose vehicle,APS121,9
+1,Assets in the cover pool,APS121,10
+1,Assets outside the cover pool,APS121,11
+1,Liabilities between the ADI and covered bond special purpose vehicle,APS121,12
+1,Reports,APS121,13
+1,Default provisions,APS121,14
+1,Implications for other obligations,APS121,15
+1,Notifications,APS121,16
+1,Assets in Australia,APS121,17
+1,Authority,APS180,1
+1,Application,APS180,2
+1,Interpretation,APS180,3
+1,Definitions,APS180,4
+1,Key principles,APS180,5
+1,Risk-weighting approach,APS180,6
+1,Historical rate rollovers,APS180,7
+1,Adjustments and exclusions,APS180,8
+1,Previous exercise of discretion,APS180,9
+1,Attachment A - Counterparty credit risk requirements for bilateral transactions,APS180,10
+2,Default risk RWE for OTC derivative transactions,APS180,11
+2,Counterparty credit risk exposure amount under the SA-CCR,APS180,12
+2,Counterparty credit risk exposure amount under the adjusted CEM,APS180,13
+2,Adjustment for incurred CVA under the SA-CCR and adjusted CEM,APS180,14
+2,Credit risk mitigation,APS180,15
+2,Risk weighting,APS180,16
+2,CVA risk capital charge,APS180,17
+1,Attachment B - Counterparty credit risk requirements for centrally cleared transactions,APS180,18
+2,Exposures arising from transactions cleared through a QCCP,APS180,19
+2,Trade exposure RWE for a clearing member ADI's exposure to a QCCP,APS180,20
+2,Clearing member ADI's exposure to clients,APS180,21
+2,Client ADI's exposure to a QCCP,APS180,22
+2,Exposures arising from collateral posted to a QCCP,APS180,23
+2,Exposures arising from transactions cleared through a non-qualifying CCP,APS180,24
+2,Risk management requirements for centrally cleared exposures,APS180,25
+2,Membership of CCPs,APS180,26
+1,Attachment C - Capital charge for default fund exposure to a QCCP,APS180,27
+1,Attachment D - The standardised approach for measuring counterparty credit risk exposures (SA-CCR),APS180,28
+2,Exposure at default (EAD),APS180,29
+3,Replacement cost (RC),APS180,30
+4,RC for an unmargined netting set,APS180,31
+4,RC for a margined netting set,APS180,32
+2,Potential future exposure (PFE),APS180,33
+3,Allocation of a transaction to one or more asset classes,APS180,34
+3,Definition and notation of key parameters,APS180,35
+3,Add-on for interest rate derivative transactions,APS180,36
+3,Add-on for foreign exchange derivative transactions,APS180,37
+3,Add-on for credit derivative transactions,APS180,38
+3,Add-on for equity derivative transactions,APS180,39
+3,Add-on for commodity derivative transactions,APS180,40
+2,Transaction-level and supervisory parameters,APS180,41
+3,Adjusted notional amount,APS180,42
+3,Supervisory delta adjustment and treatment of options,APS180,43
+3,Maturity Factor,APS180,44
+3,Treatment of multiple margin agreements and multiple netting sets,APS180,45
+3,Treatment of eligible collateral taken outside of netting sets,APS180,46
+1,Attachment E - The adjusted current exposure method (adjusted CEM),APS180,47
+2,Calculation of potential future credit exposure: transactions that are not covered by an eligible bilateral netting agreement,APS180,48
+2,Calculation of potential future credit exposure: Transactions covered by an eligible bilateral netting agreement,APS180,49
+3,Risk-weighted amount,APS180,50
+1,Authority,APS112,1
+1,Application and commencement,APS112,2
+1,Interpretation,APS112,3
+1,Adjustments and exclusions,APS112,4
+1,Previous exercise of discretion,APS112,5
+1,Scope,APS112,6
+1,Definitions,APS112,7
+1,Key principles,APS112,8
+1,Risk-weighting approach,APS112,9
+2,Risk-weighted on-balance sheet assets,APS112,10
+2,Risk-weighted off-balance sheet exposures,APS112,11
+1,Credit risk mitigation,APS112,12
+1,Attachment A - Risk weights for property exposures,APS112,13
+2,Standard property loans,APS112,14
+2,Loan-to-valuation ratio,APS112,15
+2,Credit risk mitigation,APS112,16
+2,Residential property,APS112,17
+3,Lenders' mortgage insurance,APS112,18
+3,Risk weights for standard residential property loans,APS112,19
+3,Risk weights for non-standard residential property loans,APS112,20
+2,Commercial property,APS112,21
+3,Dependent on property cash flows,APS112,22
+3,Not dependent on property cash flows,APS112,23
+2,"Land acquisition, development and construction",APS112,24
+1,Attachment B - Risk weights for non-property exposures,APS112,25
+2,Sovereign exposures,APS112,26
+2,Domestic public sector entities,APS112,27
+2,Bank exposures,APS112,28
+3,Covered bonds,APS112,29
+2,Corporate exposures,APS112,30
+3,General corporate - rated exposures,APS112,31
+3,General corporate - unrated small- and medium-sized enterprise exposures,APS112,32
+3,General corporate - other,APS112,33
+3,Specialised lending,APS112,34
+2,Retail exposures,APS112,35
+2,Margin lending exposures,APS112,36
+2,Subordinated debt,APS112,37
+2,Equity,APS112,38
+2,Leases,APS112,39
+2,Exposures through a third party,APS112,40
+2,Other exposures,APS112,41
+2,Risk weight multiplier for certain exposures with currency mismatch,APS112,42
+1,Attachment C - Off-balance sheet commitments,APS112,43
+1,Attachment D - Unsettled and failed transactions,APS112,44
+1,Attachment E - Defaulted exposures,APS112,45
+2,Risk weights for residential property exposures,APS112,46
+2,Risk weights for other defaulted exposures,APS112,47
+1,Attachment F - External credit ratings,APS112,48
+2,Issue-specific and issuer ratings,APS112,49
+2,Multiple assessments,APS112,50
+2,Domestic and foreign currency exposures,APS112,51
+2,Mapping of credit rating grades,APS112,52
+1,Attachment G - Collateralised transactions,APS112,53
+2,Minimum conditions for collateralised transactions,APS112,54
+2,The simple approach,APS112,55
+3,Eligible financial collateral under the simple approach,APS112,56
+3,Risk weights under the simple approach,APS112,57
+2,The comprehensive approach,APS112,58
+3,Eligible financial collateral under the comprehensive approach,APS112,59
+3,Calculation of Regulatory Capital for collateralised transactions,APS112,60
+3,Collateral maturity mismatch,APS112,61
+3,Supervisory haircuts,APS112,62
+3,Adjustments for different holding periods and non-daily mark-to-market or remargining,APS112,63
+3,Treatment of SFTs covered by master netting agreements,APS112,64
+1,Attachment H - Netting,APS112,65
+2,Use of netting,APS112,66
+2,On-balance sheet netting,APS112,67
+2,Eligible bilateral netting agreement,APS112,68
+2,Legal enforceability,APS112,69
+1,Attachment I - Guarantees,APS112,70
+2,Minimum requirements,APS112,71
+2,Eligible guarantors,APS112,72
+2,Materiality thresholds,APS112,73
+2,Proportional and tranched cover,APS112,74
+2,Currency mismatch,APS112,75
+2,Maturity mismatch,APS112,76
+1,Attachment J - Credit derivatives,APS112,77
+2,Purchased credit protection,APS112,78
+3,Minimum requirements,APS112,79
+3,Eligible credit protection providers,APS112,80
+3,Materiality thresholds,APS112,81
+3,Proportional and tranched cover,APS112,82
+3,Currency mismatch,APS112,83
+3,Maturity mismatch,APS112,84
+2,Sold credit protection,APS112,85
+3,Credit-default swaps,APS112,86
+3,First- and second-to-default basket credit derivatives,APS112,87
+1,Authority,APS113,1
+1,Application and commencement,APS113,2
+1,Interpretation,APS113,3
+1,Adjustments and exclusions,APS113,4
+1,Previous exercise of discretion,APS113,5
+1,Scope,APS113,6
+1,Definitions,APS113,7
+1,Key principles,APS113,8
+1,Governance and oversight,APS113,9
+2,Credit risk control,APS113,10
+2,Independent review,APS113,11
+1,Asset classes,APS113,12
+2,Definition of corporate exposures,APS113,13
+3,Income-producing real estate,APS113,14
+2,Definition of sovereign exposures,APS113,15
+2,Definition of financial institution exposures,APS113,16
+2,Definition of retail exposures,APS113,17
+3,Retail residential mortgage,APS113,18
+3,Qualifying revolving retail,APS113,19
+3,Small- and medium-sized enterprise retail,APS113,20
+3,Other retail,APS113,21
+1,IRB approval,APS113,22
+2,Initial approval,APS113,23
+3,Phased roll-out,APS113,24
+3,Permanent partial use,APS113,25
+2,Ongoing requirements,APS113,26
+1,Attachment A - IRB risk-weight functions,APS113,27
+2,"Risk-weighted assets for corporate, sovereign and financial institution exposures",APS113,28
+3,Firm-size adjustment for small- and medium-sized enterprises,APS113,29
+3,Risk-weighted asset adjustment for income-producing real estate,APS113,30
+2,Risk-weighted assets for specialised lending exposures subject to the supervisory slotting approach,APS113,31
+2,Risk-weighted assets for retail exposures,APS113,32
+3,Retail residential mortgage exposures,APS113,33
+3,Qualifying revolving retail exposures,APS113,34
+3,Small- and medium-sized enterprise retail exposures,APS113,35
+3,Other retail exposures,APS113,36
+2,Risk-weighted assets for lease exposures,APS113,37
+2,Risk-weighted assets for defaulted exposures,APS113,38
+1,Attachment B - Risk components for each asset class,APS113,39
+2,Probability of default estimates,APS113,40
+2,Loss given default estimates,APS113,41
+3,Senior unsecured exposures and senior exposures secured by ineligible collateral under the FIRB approach,APS113,42
+3,Senior unsecured exposures under the AIRB approach,APS113,43
+3,Subordinated debt,APS113,44
+3,Exposures secured by eligible collateral under the FIRB approach,APS113,45
+4,Methodology for recognition of eligible collateral,APS113,46
+3,Corporate exposures under the AIRB approach,APS113,47
+3,Retail exposures,APS113,48
+2,Exposure at default estimates,APS113,49
+3,On-balance sheet exposures,APS113,50
+3,Off-balance sheet exposures except those that expose an ADI to counterparty credit risk,APS113,51
+3,Revolving retail exposures,APS113,52
+3,Off-balance sheet exposures that expose an ADI to counterparty credit risk,APS113,53
+2,Effective maturity,APS113,54
+3,Exceptions to the one-year maturity floor,APS113,55
+2,Treatment of guarantees and credit derivatives,APS113,56
+3,Recognition under the FIRB substitution approach,APS113,57
+3,Recognition under the AIRB or retail IRB substitution approach,APS113,58
+2,Maturity mismatch,APS113,59
+2,Treatment of securities financing transactions,APS113,60
+1,Attachment C - Treatment of expected losses and provisions,APS113,61
+2,Calculation of expected loss,APS113,62
+2,Expected loss for specialised lending exposures subject to the supervisory slotting approach,APS113,63
+2,Calculation of eligible provisions,APS113,64
+2,Treatment of expected loss and provisions,APS113,65
+1,Attachment D - Minimum requirements for the use of an IRB approach,APS113,66
+2,Composition of minimum requirements,APS113,67
+2,Rating system design,APS113,68
+3,Rating dimensions,APS113,69
+4,"Requirements for corporate, sovereign and financial institution exposures",APS113,70
+4,Requirements for retail exposures,APS113,71
+3,Rating structure,APS113,72
+4,"Requirements for corporate, sovereign and financial institution exposures",APS113,73
+4,Requirements for retail exposures,APS113,74
+3,Rating criteria,APS113,75
+4,Requirements for all exposures,APS113,76
+4,Additional requirements for specialised lending exposures subject to the supervisory slotting approach,APS113,77
+3,Rating assignment horizon,APS113,78
+3,Use of statistical models in the rating process,APS113,79
+3,Documentation of rating system design,APS113,80
+2,Rating system operations,APS113,81
+3,Rating coverage,APS113,82
+3,Integrity of the rating process,APS113,83
+4,"Requirements for corporate, sovereign and financial institution exposures",APS113,84
+4,Requirements for retail exposures,APS113,85
+3,Overrides,APS113,86
+3,Data maintenance,APS113,87
+4,Requirements for all exposures,APS113,88
+4,"Additional requirements for corporate, sovereign and financial institution exposures",APS113,89
+4,Additional requirements for retail exposures,APS113,90
+3,Stress tests in the assessment of capital adequacy,APS113,91
+2,Use of internal ratings,APS113,92
+2,Risk quantification,APS113,93
+3,Overall requirements for estimation,APS113,94
+3,Definition of default,APS113,95
+3,Re-aging,APS113,96
+3,Risk quantification requirements specific to probability of default estimation,APS113,97
+4,Requirements for all exposures,APS113,98
+4,"Additional requirements for corporate, sovereign and financial institution exposures",APS113,99
+4,Additional requirements for retail exposures,APS113,100
+3,Risk quantification requirements specific to loss given default estimation,APS113,101
+4,Requirements for all exposures,APS113,102
+4,Additional requirements for corporate exposures,APS113,103
+4,Additional requirements for retail exposures,APS113,104
+4,Additional requirements for defaulted exposures,APS113,105
+3,Risk quantification requirements specific to exposure at default estimation,APS113,106
+4,Requirements for revolving retail exposures,APS113,107
+3,Risk quantification requirements specific to expected loss,APS113,108
+2,Validation of internal estimates,APS113,109
+1,Attachment E - Requirements for recognition of collateral and credit risk mitigation,APS113,110
+2,Eligible collateral under the FIRB approach,APS113,111
+3,Eligible financial collateral,APS113,112
+3,Eligible financial receivables,APS113,113
+3,Eligible commercial or residential real estate,APS113,114
+3,Other eligible physical collateral,APS113,115
+3,General security agreements,APS113,116
+2,Recognition of leasing,APS113,117
+2,Recognition of guarantees and credit derivatives,APS113,118
+4,FIRB approach,APS113,119
+4,AIRB or retail IRB approach,APS113,120
+1,Attachment F - Risk-weighted assets for purchased receivables,APS113,121
+2,Risk-weighted assets for default risk,APS113,122
+3,Default risk for purchased retail receivables,APS113,123
+3,Default risk for purchased corporate receivables,APS113,124
+4,Top-down approach,APS113,125
+2,Risk-weighted assets for dilution risk,APS113,126
+2,Treatment of purchase price discount for receivables,APS113,127
+2,Recognition of credit risk mitigation,APS113,128
+2,"Requirements specific to estimating probability of default, loss given default and expected loss for qualifying purchased receivables",APS113,129
+1,Attachment G - Supervisory slotting criteria,APS113,130
+1,Authority,APS222,1
+1,Application,APS222,2
+1,Interpretation,APS222,3
+1,Definitions,APS222,4
+1,Adjustments and exclusions,APS222,5
+1,Previous exercise of discretion,APS222,6
+1,The role of the Board,APS222,7
+1,Control of risks arising from related entities,APS222,8
+1,Provision of support,APS222,9
+1,Group badging and disclosures,APS222,10
+1,Participation in group operations,APS222,11
+1,Limits on exposures to related entities,APS222,12
+1,Measuring exposures to related entities,APS222,13
+1,Prior notification requirements,APS222,14
+1,Notification requirements,APS222,15
+1,Approval requirements,APS222,16
+1,Attachment A - Step-in risk,APS222,17
+1,Attachment B - Funds management,APS222,18
+2,Separation,APS222,19
+2,Purchase of securities,APS222,20
+2,Liquidity facilities,APS222,21
+2,Underwriting of funds management vehicles,APS222,22
+1,Attachment C - Extended Licensed Entity,APS222,23
+1,Authority,APS221,1
+1,Application,APS221,2
+1,Interpretation,APS221,3
+1,Definitions,APS221,4
+1,The role of the Board,APS221,5
+1,Control of large exposures and risk concentrations,APS221,6
+1,Identifying large exposures,APS221,7
+2,Connected counterparties,APS221,8
+1,Large exposure limits,APS221,9
+1,Measuring large exposure values,APS221,10
+1,Prior notification requirements,APS221,11
+1,Approval requirements,APS221,12
+1,Notification requirements,APS221,13
+1,Significant risk concentrations,APS221,14
+1,Adjustments and exclusions,APS221,15
+1,Previous exercise of discretion,APS221,16
+1,Attachment A - Measuring large exposure values,APS221,17
+2,Credit risk mitigation,APS221,18
+2,On-balance sheet netting,APS221,19
+2,Exposure values for trading book positions,APS221,20
+2,Offsetting long and short positions in the trading book in the same issue,APS221,21
+2,Offsetting long and short positions in the trading book in different issues,APS221,22
+2,Exposure values for covered bonds,APS221,23
+2,Exposures to structured vehicles,APS221,24
+2,Additional risk factor,APS221,25
+3,Exposure values for non-qualifying central counterparties and clearing activity exposures,APS221,26
+1,Authority,APS220,1
+1,Application,APS220,2
+1,Scope,APS220,3
+1,Interpretation,APS220,4
+1,Definitions,APS220,5
+1,Adjustments and exclusions,APS220,6
+1,Previous exercise of discretion,APS220,7
+1,Credit risk management framework,APS220,8
+1,Outsourcing,APS220,9
+1,Large exposures and associations with related entities,APS220,10
+1,Credit risk appetite,APS220,11
+1,Credit risk management strategy,APS220,12
+1,The role of the Board and senior management,APS220,13
+2,Board responsibilities,APS220,14
+2,Senior management responsibilities,APS220,15
+1,Credit risk policies and processes,APS220,16
+2,Internal risk appetite limits,APS220,17
+2,Country and transfer risk,APS220,18
+1,Credit origination,APS220,19
+1,Credit assessment and approval process,APS220,20
+2,Exposures to individuals,APS220,21
+2,Exposures other than to individuals,APS220,22
+2,Collateral and guarantees,APS220,23
+2,Credit approval and experienced credit judgement,APS220,24
+2,Third party credit assessment and approval,APS220,25
+1,"Credit administration, measurement and monitoring",APS220,26
+2,Credit risk grading systems,APS220,27
+2,Stress testing,APS220,28
+1,Controls over credit risk,APS220,29
+2,Review of credit risk management processes,APS220,30
+2,Internal controls and limits,APS220,31
+2,Systems for remedial action,APS220,32
+1,Classification of exposures and provisions,APS220,33
+1,Non-performing exposures,APS220,34
+2,Off-balance sheet exposures,APS220,35
+2,Reclassification of non-performing exposures to performing,APS220,36
+1,Restructured exposures,APS220,37
+2,Criteria for exit from the restructured exposures category,APS220,38
+1,Credit risk and accounting for expected credit losses,APS220,39
+1,Prescribed provisioning,APS220,40
+1,Supervisory limits,APS220,41
+1,Adequacy of credit risk management and provisions,APS220,42
+1,Special purpose engagements,APS220,43
+1,Attachment A - Collateral valuation,APS220,44
+2,Valuation of security in the form of property,APS220,45
+2,Valuation of security in the form of non-real estate assets,APS220,46
+1,Attachment B - Prescribed provisioning,APS220,47
+2,Categories of past-due exposures,APS220,48
+3,Category One exposures,APS220,49
+3,Category Two exposures,APS220,50
+3,Category Three exposures,APS220,51
+3,Category Four exposures,APS220,52
+3,Well-secured exposures,APS220,53
+3,"Restructured exposures, assets acquired through security enforcement, and other real estate owned",APS220,54
+1,Attachment C - Macroprudential policy: credit measures,APS220,55
+2,Definitions,APS220,56
+2,Serviceability buffer,APS220,57
+2,Lending limits,APS220,58
+1,Authority,APS001,1
+1,Application,APS001,2
+1,Interpretation,APS001,3
+1,Key terms,APS001,4
+1,Attachment A,APS001,5
+2,Conglomerate group,APS001,6
+1,Attachment B,APS001,7
+2,Non-consolidated subsidiaries,APS001,8
+1,Authority,APS210,1
+1,Application,APS210,2
+1,Interpretation,APS210,3
+1,Definitions,APS210,4
+1,Key principles,APS210,5
+1,Board and senior management responsibilities,APS210,6
+1,Liquidity risk management framework,APS210,7
+1,Management of liquidity risk,APS210,8
+1,Funding strategy,APS210,9
+1,Contingency funding plan,APS210,10
+1,Classification of ADIs,APS210,11
+1,Liquidity coverage ratio ADIs,APS210,12
+1,Minimum liquidity holdings ADIs,APS210,13
+1,Net stable funding ratio,APS210,14
+1,Stress testing,APS210,15
+1,Local operational capacity,APS210,16
+1,Adjustments and exclusions,APS210,17
+1,Previous exercise of discretion,APS210,18
+1,Attachment A - Liquidity coverage ratio,APS210,19
+2,Liquidity coverage ratio,APS210,20
+3,Eligible stock high-quality liquid assets (HQLA),APS210,21
+4,HQLA1,APS210,22
+4,HQLA2A,APS210,23
+4,HQLA2B,APS210,24
+3,Use of alternative liquid asset treatment for LCR,APS210,25
+3,Operational requirements,APS210,26
+4,Level 2 consolidated banking group,APS210,27
+3,Net cash outflows,APS210,28
+3,Cash outflows,APS210,29
+4,Retail deposit outflows,APS210,30
+4,Fixed term deposit,APS210,31
+4,Unsecured wholesale funding outflows,APS210,32
+4,Operational deposits,APS210,33
+4,Liquidity facilities,APS210,34
+3,Cash inflows,APS210,35
+4,"Secured lending, including reverse repos and securities borrowing",APS210,36
+4,Lines of credit,APS210,37
+4,Inflows by counterparty,APS210,38
+5,Retail and SME inflows,APS210,39
+5,Other wholesale inflows,APS210,40
+5,Operational deposits,APS210,41
+4,Other cash inflows,APS210,42
+5,Derivatives cash inflows,APS210,43
+5,Other contractual cash inflows,APS210,44
+1,Attachment B - Minimum liquidity holdings approach,APS210,45
+1,Attachment C - Net stable funding ratio,APS210,46
+2,Available stable funding (ASF),APS210,47
+3,Maturity of funding,APS210,48
+3,Calculation of derivative liability amounts,APS210,49
+3,Liabilities and capital receiving a 100 per cent ASF factor,APS210,50
+3,Liabilities receiving a 95 per cent ASF factor,APS210,51
+3,Liabilities receiving a 90 per cent ASF factor,APS210,52
+3,Liabilities receiving a 50 per cent ASF factor,APS210,53
+3,Liabilities receiving a zero per cent ASF factor,APS210,54
+2,Required stable funding (RSF),APS210,55
+3,Maturity of assets,APS210,56
+3,Encumbered assets,APS210,57
+3,Secured financing transactions,APS210,58
+3,Calculation of derivative asset amounts,APS210,59
+3,Assets assigned a zero per cent RSF factor,APS210,60
+3,Assets assigned a five per cent RSF factor,APS210,61
+3,Assets assigned a 10 per cent RSF factor,APS210,62
+3,Assets assigned a 15 per cent RSF factor ,APS210,63
+3,Assets assigned a 50 per cent RSF factor,APS210,64
+3,Assets assigned a 65 per cent RSF factor ,APS210,65
+3,Assets assigned a 85 per cent RSF factor ,APS210,66
+3,Assets assigned a 100 per cent RSF factor ,APS210,67
+3,Interdependent assets and liabilities,APS210,68
+3,Off-balance sheet exposures,APS210,69

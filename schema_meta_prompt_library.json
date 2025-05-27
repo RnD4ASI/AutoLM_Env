@@ -1,0 +1,191 @@
+{
+    "version": "1.0.0",
+    "description": "Schema for meta-prompt library and workflow system",
+    "collections": {
+      "meta_prompt_library": {
+        "required_fields": {
+          "metaprompt": {
+            "type": "object",
+            "description": "Collection of evaluation meta-prompts",
+            "patternProperties": {
+              "^[a-z_]+$": {
+                "type": "object",
+                "description": "Categories of meta-prompts for prompt evaluation and manipulation",
+                "patternProperties": {
+                  "^[a-z_]+$": {
+                    "type": "object",
+                    "required": ["description", "dependency", "template"],
+                    "properties": {
+                      "description": {
+                        "type": "string",
+                        "description": "Brief description of what the meta-prompt does"
+                      },
+                      "dependency": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "Input parameters required by this meta-prompt"
+                      },
+                      "template": {
+                        "type": "string",
+                        "description": "The template text with placeholders for dependencies"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "metaresponse": {
+            "type": "object",
+            "description": "Collection of meta-prompts for response evaluation and manipulation",
+            "patternProperties": {
+              "^[a-z_]+$": {
+                "type": "object",
+                "description": "Categories of meta-prompts for response handling",
+                "patternProperties": {
+                  "^[a-z_]+$": {
+                    "type": "object",
+                    "required": ["description", "dependency", "template"],
+                    "properties": {
+                      "description": {
+                        "type": "string",
+                        "description": "Brief description of what the meta-prompt does"
+                      },
+                      "dependency": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "Input parameters required by this meta-prompt"
+                      },
+                      "template": {
+                        "type": "string",
+                        "description": "The template text with placeholders for dependencies"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "metaworkflow": {
+            "type": "object",
+            "description": "Collection of meta-prompts for workflow management",
+            "patternProperties": {
+              "^[a-z_]+$": {
+                "type": "object",
+                "description": "Categories of meta-prompts for workflow operations",
+                "patternProperties": {
+                  "^[a-z_]+$": {
+                    "type": "object",
+                    "required": ["description", "dependency", "template"],
+                    "properties": {
+                      "description": {
+                        "type": "string",
+                        "description": "Brief description of what the meta-prompt does"
+                      },
+                      "dependency": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "Input parameters required by this meta-prompt"
+                      },
+                      "template": {
+                        "type": "string",
+                        "description": "The template text with placeholders for dependencies"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "affix": {
+            "type": "object",
+            "description": "Collection of reasoning techniques that can be affixed to prompts",
+            "patternProperties": {
+              "^[a-z_]+$": {
+                "type": "object",
+                "description": "Reasoning technique patterns",
+                "required": ["prefix", "postfix", "replace"],
+                "properties": {
+                  "prefix": {
+                    "type": "object",
+                    "description": "Text to add before prompt components",
+                    "properties": {
+                      "task": {"type": "string"},
+                      "instruction": {"type": "string"},
+                      "response_format": {"type": "string"}
+                    }
+                  },
+                  "postfix": {
+                    "type": "object",
+                    "description": "Text to add after prompt components",
+                    "properties": {
+                      "task": {"type": "string"},
+                      "instruction": {"type": "string"},
+                      "response_format": {"type": "string"}
+                    }
+                  },
+                  "replace": {
+                    "type": "object",
+                    "description": "Text to replace prompt components",
+                    "properties": {
+                      "task": {"type": "string"},
+                      "instruction": {"type": "string"},
+                      "response_format": {"type": "string"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "optional_fields": {
+          "created_at": {
+            "type": "date",
+            "description": "Date when the meta-prompt library was created"
+          },
+          "updated_at": {
+            "type": "date",
+            "description": "Date when the meta-prompt library was last updated"
+          },
+          "version_info": {
+            "type": "object",
+            "description": "Version information for the meta-prompt library",
+            "properties": {
+              "major": {"type": "integer"},
+              "minor": {"type": "integer"},
+              "patch": {"type": "integer"},
+              "release_notes": {"type": "string"}
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional metadata about the meta-prompt library",
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "constraints": [
+      {
+        "name": "valid_meta_prompt_references",
+        "description": "All meta_prompt references must point to existing meta-prompts",
+        "validation": "Each node's meta_prompt_category, meta_prompt_type, and meta_prompt_id must resolve to a valid path in the meta_prompt_library"
+      },
+      {
+        "name": "dependency_satisfaction",
+        "description": "All meta-prompt dependencies must be satisfied",
+        "validation": "For each node, all dependencies of the referenced meta-prompt must be provided either as parameters or through edges from other nodes"
+      },
+      {
+        "name": "parameter_consistency",
+        "description": "Parameters provided must match the dependencies of the meta-prompt",
+        "validation": "For each node, the parameters provided must include all required dependencies of the referenced meta-prompt"
+      }
+    ]
+  }

@@ -1,0 +1,206 @@
+{
+    "version": "1.0.0",
+    "description": "Schema for task workflow graph with nodes and directed edges",
+    "collections": {
+      "graphs": {
+        "required_fields": {
+          "graph_id": {
+            "type": "string",
+            "description": "Unique identifier for the workflow graph",
+            "format": "uuid",
+            "indexed": true
+          },
+          "nodes": {
+            "type": "object",
+            "description": "Collection of task nodes in the workflow",
+            "patternProperties": {
+              "^node_[0-9]+$": {
+                "type": "object",
+                "description": "Task node representing a specific workflow step",
+                "properties": {
+                  "prompt_id": {
+                    "type": "string",
+                    "description": "Reference to the prompt template",
+                    "pattern": "^prompt_[0-9]{4}$",
+                    "indexed": true
+                  },
+                  "task_summary": {
+                    "type": "string",
+                    "description": "Brief description of the task",
+                    "max_length": 500
+                  }
+                },
+                "required": ["prompt_id", "task_summary"],
+                "additionalProperties": false
+              }
+            },
+            "minProperties": 1
+          },
+          "edges": {
+            "type": "array",
+            "description": "Directed connections between task nodes",
+            "items": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string",
+                  "description": "ID of the source node",
+                  "pattern": "^node_[0-9]+$"
+                },
+                "target": {
+                  "type": "string",
+                  "description": "ID of the target node",
+                  "pattern": "^node_[0-9]+$"
+                },
+                "edge_type": {
+                  "type": "string",
+                  "description": "Type of relationship between nodes",
+                  "enum": ["sequential", "conditional", "parallel"],
+                  "default": "sequential"
+                },
+                "condition": {
+                  "type": "string",
+                  "description": "Condition for conditional edges",
+                  "optional": true
+                }
+              },
+              "required": ["source", "target"],
+              "additionalProperties": false
+            },
+            "minItems": 1
+          }
+        },
+        "optional_fields": {
+          "name": {
+            "type": "string",
+            "description": "Human-readable name for the workflow",
+            "max_length": 100
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description of the workflow purpose",
+            "max_length": 1000
+          },
+          "created_at": {
+            "type": "date",
+            "description": "Date when workflow was created"
+          },
+          "updated_at": {
+            "type": "date",
+            "description": "Date when workflow was last updated"
+          },
+          "created_by": {
+            "type": "string",
+            "description": "User who created the workflow"
+          },
+          "tags": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Keywords for categorizing the workflow",
+            "maxItems": 10
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional custom metadata",
+            "additionalProperties": true
+          }
+        },
+        "indexes": [
+          {"fields": ["graph_id"], "type": "unique"},
+          {"fields": ["nodes.*.prompt_id"], "type": "btree"},
+          {"fields": ["tags"], "type": "array"}
+        ],
+        "constraints": [
+          {
+            "name": "valid_edges",
+            "description": "All edge sources and targets must reference existing nodes",
+            "type": "custom_validation"
+          },
+          {
+            "name": "acyclic_graph",
+            "description": "Graph must not contain cycles",
+            "type": "custom_validation"
+          }
+        ]
+      },
+      "prompt_templates": {
+        "required_fields": {
+          "prompt_id": {
+            "type": "string",
+            "description": "Unique identifier for the prompt template",
+            "pattern": "^prompt_[0-9]{4}$",
+            "indexed": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description of the prompt's purpose",
+            "max_length": 200
+          },
+          "components": {
+            "type": "object",
+            "description": "Core prompt structure components",
+            "properties": {
+              "role": {
+                "type": "string",
+                "description": "Professional role the prompt is written for"
+              },
+              "task": {
+                "type": "string",
+                "description": "Primary action to be performed"
+              },
+              "purpose": {
+                "type": "string",
+                "description": "Goal or intended outcome of the prompt"
+              },
+              "audience": {
+                "type": "string",
+                "description": "Target audience for the output"
+              },
+              "context": {
+                "type": "string",
+                "description": "Background information and scenario details"
+              },
+              "instructions": {
+                "type": "string",
+                "description": "Specific tasks or steps to follow"
+              },
+              "response_format": {
+                "type": "string",
+                "description": "Expected structure of the response"
+              }
+            },
+            "required": ["role", "task", "purpose", "audience", "instructions", "response_format"]
+          }
+        },
+        "optional_fields": {
+          "index": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Keywords for categorizing and searching prompts"
+          },
+          "created_at": {
+            "type": "date",
+            "description": "Date when prompt was created"
+          },
+          "updated_at": {
+            "type": "date",
+            "description": "Date when prompt was last updated"
+          }
+        }
+      }
+    },
+    "relationships": [
+      {
+        "name": "nodes_to_prompts",
+        "type": "foreign_key",
+        "from": {
+          "collection": "graphs",
+          "field": "nodes.*.prompt_id"
+        },
+        "to": {
+          "collection": "task_prompt_templates",
+          "field": "prompt_id"
+        }
+      }
+    ]
+}

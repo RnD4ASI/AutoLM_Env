@@ -1,0 +1,257 @@
+{
+    "version": "1.0.0",
+    "validation_rules": {
+        "models": {
+            "completion": {
+                "azure_openai": [
+                    "gpt-4o",
+                    "gpt-4-turbo",
+                    "gpt-35-turbo"
+                ],
+                "vertex": [
+                    "gemini-1.5-pro",
+                    "gemini-1.5-flash",
+                    "gemini-1.0-pro"
+                ],
+                "anthropic": [
+                    "claude-3-opus-20240229",
+                    "claude-3-sonnet-20240229",
+                    "claude-3-haiku-20240307",
+                    "claude-3-7-sonnet-20250219"
+                ],
+                "huggingface": [
+                    "Qwen2.5-1.5B",
+                    "Llama-3.2-1B",
+                    "Llama-3.2-3B",
+                    "Mistral-7B-v0.3",
+                    "Llama-3.1-8B",
+                    "Phi-4",
+                    "Phi-4-mini-Instruct",
+                    "Phi-3.5-mini",
+                    "Qwen2.5-7B",
+                    "Qwen25-7B-Instruct-1M",
+                    "Qwen3-4B",
+                    "Yi-1.5-9B"
+                ],
+                "routing_rules": {
+                    "default_provider": "azure_openai",
+                    "fallback_provider": "huggingface",
+                    "provider_detection": {
+                        "azure_openai": ["gpt-", "text-davinci-"],
+                        "vertex": ["gemini-"],
+                        "anthropic": ["claude-"],
+                        "huggingface": ["/"]
+                    }
+                }
+            },
+            "reasoning": {
+                "azure_openai": [
+                    "o1",
+                    "o3-mini"
+                ],
+                "anthropic": [
+                    "claude-4-sonnet-latest",
+                    "claude-4-haiku-latest",
+                    "claude-3-7-sonnet-20250219"
+                ],
+                "huggingface": [
+                    "DeepSeek-R1-Distill-Qwen-1.5B",
+                    "DeepSeek-R1-Distill-Qwen-3B",
+                    "DeepSeek-R1-Distill-Qwen-7B",
+                    "DeepSeek-R1-Distill-Llama-8B",
+                    "DeepScaleR-1.5B-Prev",
+                    "OpenThinker-7B",
+                    "Fin-o1-8B",
+                    "s1.1-32B",
+                    "Marco-o1",
+                    "Phi-4-mini-R1"
+                ],
+                "routing_rules": {
+                    "default_provider": "azure_openai",
+                    "fallback_provider": "huggingface",
+                    "provider_detection": {
+                        "azure_openai": ["o"],
+                        "anthropic": ["claude-"],
+                        "huggingface": ["/"]
+                    }
+                }
+            },
+            "video": {
+                "azure_openai": [],
+                "huggingface": [
+                    "Wan2.1-T2V-1.3B"
+                ],
+                "routing_rules":{
+                    "default_provider": "huggingface",
+                    "fallback_provider": "huggingface",
+                    "provider_detection": {
+                        "azure_openai": ["Sora"],
+                        "huggingface": ["B"]
+                    } 
+                }
+            },
+            "embedding": {
+                "azure_openai": [
+                    "text-embedding-ada-002",
+                    "text_embedding_small",
+                    "text_embedding_large"
+                ],
+                "vertex": [
+                    "text-embedding-gecko",
+                    "text-embedding-gecko-multilingual"
+                ],
+                "anthropic": [
+                    "claude-3-embedding",
+                    "claude-3-haiku-20240307"
+                ],
+                "huggingface": [
+                    "Jina-embeddings-v3",
+                    "Jina-embeddings-v2-base-en",
+                    "Granite-embedding-278m",
+                    "Finance-Embedding-Investopedia"
+                ],
+                "routing_rules": {
+                    "default_provider": "azure_openai",
+                    "fallback_provider": "huggingface",
+                    "provider_detection": {
+                        "azure_openai": ["text-embedding-"],
+                        "vertex": ["text-embedding-gecko"],
+                        "anthropic": ["claude-"],
+                        "huggingface": ["/"]
+                    }
+                }
+            },
+            "reranker": {
+                "huggingface": [
+                    "BAAI/bge-reranker-large",
+                    "jinaai/jina-reranker-m0"
+                ],
+                "routing_rules": {
+                    "default_provider": "huggingface",
+                    "fallback_provider": "huggingface",
+                    "provider_detection": {
+                        "azure_openai": ["azure-"],
+                        "huggingface": ["/"]
+                    }
+                }
+            },
+            "ocr": {
+                "huggingface": [
+                    "GOT-OCR2",
+                    "UniMERNet-full",
+                    "DmolFovling-256M",
+                    "olmOCR-7B-0225-preview"
+                ],
+                "mistral": [
+                    "mistral-ocr-2503"
+                ],
+                "routing_rules": {
+                    "default_provider": "huggingface",
+                    "fallback_provider": "huggingface",
+                    "provider_detection": {
+                        "mistral": ["mistral-ocr-"],
+                        "huggingface": ["/"]
+                    }
+                }
+            },
+            "tokeniser": {
+                "azure_openai": [
+                    "o200k_base",
+                    "cl100k_base",
+                    "p50k_base"
+                ],
+                "huggingface": [
+                    "Qwen2.5-1.5B",
+                    "Llama-3.2-1B",
+                    "Llama-3.2-3B",
+                    "Mistral-7B-v0.3",
+                    "Llama-3.1-8B",
+                    "Phi-4",
+                    "Phi-4-mini-Instruct",
+                    "Phi-3.5-mini",
+                    "Qwen2.5-7B",
+                    "Qwen25-7B-Instruct-1M",
+                    "Qwen3-4B",
+                    "Yi-1.5-9B"
+                ],
+                "anthropic": [
+                    "claude-3-7-sonnet-20250219",
+                    "claude-3-haiku-20240307",
+                    "claude-3-opus-20240229",
+                    "claude-3-sonnet-20240229"
+                ],
+                "vertex": [
+                    "gemini-2.5-pro",
+                    "gemini-2.5-flash",
+                    "gemini-2.0-pro"
+                ],
+                "routing_rules": {
+                    "default_provider": "azure_openai",
+                    "fallback_provider": "huggingface",
+                    "provider_detection": {
+                        "azure_openai": ["o200k_base", "cl100k_base", "p50k_base"],
+                        "huggingface": ["/"],
+                        "anthropic": ["claude-"],
+                        "vertex": ["gemini-"]
+                    }
+                }
+            },
+            "coder": {
+                "huggingface": [
+                    "OlympicCoder-7B",
+                    "Qwen2.5-Coder-7B-Instruct",
+                    "DeepSeek-Coder-V2-Lite-Instruct"
+                ],
+                "routing_rules": {
+                    "default_provider": "huggingface",
+                    "fallback_provider": "huggingface",
+                    "provider_detection": {
+                        "azure_openai": ["azure-"],
+                        "huggingface": ["/"]
+                    }
+                }
+            },
+            "voice": {
+                "huggingface": [
+                    "Sesame-CSM-1B"
+                ]
+            }
+        },
+        "model_parameters": {
+            "completion": {
+                "temperature": {
+                    "min": 0.0,
+                    "max": 2.0,
+                    "default": 0.7
+                },
+                "max_tokens": {
+                    "min": 1,
+                    "max": 32000,
+                    "default": 2000
+                },
+                "top_p": {
+                    "min": 0.0,
+                    "max": 1.0,
+                    "default": 0.95
+                },
+                "frequency_penalty": {
+                    "min": -2.0,
+                    "max": 2.0,
+                    "default": 0.0
+                },
+                "presence_penalty": {
+                    "min": -2.0,
+                    "max": 2.0,
+                    "default": 0.0
+                }
+            },
+            "embedding": {
+                "batch_size": {
+                    "min": 1,
+                    "max": 32,
+                    "default": 8
+                }
+            }
+        }
+    }
+}

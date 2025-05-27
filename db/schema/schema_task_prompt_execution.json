@@ -1,0 +1,165 @@
+{
+    "version": "1.0.0",
+    "description": "Schema for workflow graph with embedded prompt templates",
+    "type": "object",
+    "required": ["edges"],
+    "additionalProperties": false,
+    "patternProperties": {
+      "^node_[0-9]+$": {
+        "type": "object",
+        "description": "A workflow node containing a single prompt template",
+        "additionalProperties": false,
+        "patternProperties": {
+          "^prompt_[0-9]{4}$": {
+            "type": "object",
+            "description": "Prompt template embedded within a node",
+            "required": ["description", "components"],
+            "properties": {
+              "description": {
+                "type": "string",
+                "description": "Brief description of the prompt's purpose",
+                "maxLength": 200
+              },
+              "index": {
+                "type": "array",
+                "description": "Keywords for categorizing and searching prompts",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1
+              },
+              "components": {
+                "type": "object",
+                "description": "Core prompt structure components",
+                "required": ["role", "purpose", "task", "audience", "context", "response_format"],
+                "properties": {
+                  "role": {
+                    "type": "string",
+                    "description": "Professional role the prompt is written for"
+                  },
+                  "purpose": {
+                    "type": "string",
+                    "description": "Goal or intended outcome of the prompt"
+                  },
+                  "task": {
+                    "type": "string",
+                    "description": "Primary action to be performed"
+                  },
+                  "audience": {
+                    "type": "string",
+                    "description": "Target audience for the output"
+                  },
+                  "instructions": {
+                    "type": "string",
+                    "description": "Specific tasks or steps to follow"
+                  },
+                  "context": {
+                    "type": "string",
+                    "description": "Background information and scenario details",
+                    "maxLength": 1000
+                  },
+                  "principles": {
+                    "type": "string",
+                    "description": "Guiding principles or constraints"
+                  },
+                  "response_format": {
+                    "type": "string",
+                    "description": "Expected structure of the response"
+                  },
+                  "iteration": {
+                    "type": "string",
+                    "enum": ["yes", "no"],
+                    "description": "Whether the prompt allows iteration",
+                    "default": "no"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "minProperties": 1,
+        "maxProperties": 1
+      }
+    },
+    "properties": {
+      "edges": {
+        "type": "array",
+        "description": "Directed connections between workflow nodes",
+        "items": {
+          "type": "object",
+          "required": ["source", "target"],
+          "additionalProperties": false,
+          "properties": {
+            "source": {
+              "type": "string",
+              "description": "ID of the source node",
+              "pattern": "^node_[0-9]+$"
+            },
+            "target": {
+              "type": "string",
+              "description": "ID of the target node",
+              "pattern": "^node_[0-9]+$"
+            },
+            "edge_type": {
+              "type": "string",
+              "description": "Type of relationship between nodes",
+              "enum": ["sequential", "conditional", "parallel"],
+              "default": "sequential"
+            },
+            "condition": {
+              "type": "string",
+              "description": "Condition for conditional edges"
+            }
+          }
+        },
+        "minItems": 1
+      },
+      "metadata": {
+        "type": "object",
+        "description": "Additional workflow metadata",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the workflow"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the workflow's purpose"
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Creation timestamp",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string",
+            "description": "User who created the workflow"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Workflow categorization tags"
+          }
+        }
+      }
+    },
+    "constraints": [
+      {
+        "name": "valid_edges",
+        "description": "All edge sources and targets must reference existing nodes",
+        "validation": "All source and target values in edges must match a node_X key at the root level"
+      },
+      {
+        "name": "acyclic_graph",
+        "description": "Workflow graph must not contain cycles",
+        "validation": "The directed graph formed by the edges must not contain any cycles"
+      },
+      {
+        "name": "consistent_node_structure",
+        "description": "Each node must contain exactly one prompt template",
+        "validation": "Each node_X object must contain exactly one prompt_YYYY key"
+      }
+    ]
+  }

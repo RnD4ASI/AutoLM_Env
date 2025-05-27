@@ -1,0 +1,103 @@
+{
+    "version": "1.0.0",
+    "description": "Schema for vector database storing embeddings and metadata",
+    "collections": {
+      "documents": {
+        "required_fields": {
+          "source": {
+            "type": "string",
+            "description": "Source of the document"
+          },
+          "document_id": {
+            "type": "string",
+            "description": "Unique identifier for source document",
+            "format": "uuid",
+            "indexed": true
+          },
+          "chunk_id": {
+            "type": "string", 
+            "description": "Unique identifier for text chunk",
+            "format": "uuid",
+            "indexed": true
+          },
+          "document_name": {
+            "type": "string",
+            "description": "Name of the source document",
+            "indexed": false
+          },
+          "reference": {
+            "type": "string",
+            "description": "Human-readable reference (e.g., 'APS113, Para 1')",
+            "indexed": true
+          },
+          "hierarchy": {
+            "type": "string",
+            "description": "Document hierarchy path in associated with the corpus",
+            "example": "APS113 > Main Body > Application"
+          },
+          "corpus": {
+            "type": "text",
+            "description": "Original text content of the chunk",
+            "max_length": 10000
+          },
+          "corpus_vector": {
+            "type": "array",
+            "min_dimension": 100,
+            "max_dimension": 5000,
+            "description": "Embedding vector for the text content"
+          },
+          "hierarchy_vector": {
+            "type": "array", 
+            "min_dimension": 100,
+            "max_dimension": 5000,
+            "description": "Embedding vector for hierarchy information"
+          },
+          "embedding_model": {
+            "type": "string",
+            "description": "Model used to generate embeddings"
+          }
+        },
+        "optional_fields": {
+          "level": {
+            "type": "integer",
+            "description": "Hierarchical level (1=top level)",
+            "min": 1,
+            "max": 10
+          }
+        },
+        "indexes": [
+          {"fields": ["chunk_id"], "type": "unique"}
+        ]
+      },
+      "metadata": {
+        "required_fields": {
+          "document_id": {
+            "type": "string",
+            "description": "Reference to document",
+            "indexed": true
+          },
+          "document_author": {
+            "type": "string",
+            "description": "Document author"
+          },
+          "document_format": {
+            "type": "string",
+            "enum": ["pdf", "md", "txt", "html"]
+          },
+          "n_section": {
+            "type": "integer",
+            "description": "Number of sections in the document"
+          },
+          "n_chunk": {
+            "type": "integer",
+            "description": "Number of chunks in the document"
+          }
+        },
+        "optional_fields": {
+          "commencement_date": {"type": "date"},
+          "expiry_date": {"type": "date"},
+          "jurisdiction": {"type": "string"}
+        }
+      }
+    }
+}

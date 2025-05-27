@@ -1,0 +1,277 @@
+{
+    "metaprompt": {
+        "evaluation": {
+            "disambiguate": {
+                "description": "Template for evaluating all types of ambiguities in a prompt",
+                "dependency": ["task_prompt"],
+                "template": "You are a specialized prompt engineer with expertise in evaluating prompts used for OpenAI GPT models.\nYour task is to perform a comprehensive ambiguity analysis on a draft of a prompt, following these steps:\n\n1. COMPREHENSION PHASE\nAnalyze the given prompt delimited by triple backticks:\n\nBreak down the prompt analysis into these components:\n- Core Text: The actual content to be analyzed\n- Excluded Terms: Phrases to be ignored in analysis ('Regulatory Principles', 'Regulatory Standard', 'Regulatory Guidance', 'Business Contexts', 'RAAR')\n\n2. ANALYSIS PHASE\nIdentify ambiguities across these categories:\n- Lexical Ambiguities: Words/phrases with multiple valid meanings\n- Syntactic Ambiguities: Multiple valid grammatical interpretations\n- Vagueness Ambiguities: Borderline cases with multiple possible executions\n- Semantic Ambiguities: Context-dependent multiple interpretations\n- Incompleteness Ambiguities: Insufficient detail to convey intent\n\n3. CLASSIFICATION PHASE\nFor each identified ambiguity:\n- Classify into appropriate category\n- Document specific occurrence context\n- Provide detailed description\n- Validate against exclusion list\n\n4. VALIDATION PHASE\nVerify each identified ambiguity:\n- Ensures it's not in the exclusion list\n- Confirms proper category classification\n- Validates description clarity\n- Checks for duplicate entries\n\nOUTPUT:\nReturn the analysis in a valid JSON format:\n{{'ambiguity 1': {{'description': 'detailed description', 'category': 'one of the five categories'}},'ambiguity 2': {{'description': 'detailed description', 'category': 'one of the five categories'}}\n}}\n\nREMEMBER:\n- Exclude specified regulatory and business context terms\n- Maintain clear, specific descriptions for each ambiguity\n- Ensure proper categorization according to the five types\n- Format output as valid JSON\n- Focus on meaningful ambiguities that could affect interpretation\n\nNow, here is the task prompt for your comprehensive ambiguity analysis:\n```\n{task_prompt}\n```"
+            },
+            "select": {
+                "description": "Template for selecting the best prompt from a list of prompts",
+                "dependency": ["task_prompt"],
+                "template": "You are a specialized prompt engineer with expertise in selecting prompts.\nYour task is to select the best prompt, in terms of clarity and comprehensiveness, from a list of provided prompts, following these steps:\n\n1. COMPREHENSION PHASE\nAnalyze the task prompts delimited by triple backticks.\n\n2. SELECTION PHASE\nSelect the most relevant prompt from the list of provided prompts.\n\n3. VALIDATION PHASE\nVerify the selection:\n- Ensures only one prompt is selected\n- Confirms the selected prompt is not empty\n- Validates the selected prompt against the other prompts\n\nOUTPUT:\nReturn the selection in a valid JSON format:\n{{'prompts': [{{prompt_index: 0, select: true or false}}, {{prompt_index: 1, select: true or false}}, ...]}}\n\nREMEMBER:\n- Select only one prompt\n- Exclude empty prompts\n- Validate selection against other prompts\n- Format output as valid JSON\n- Focus on clarity and comprehensiveness\n\nNow, here are the task prompts for your selection:\n```\n{task_prompt}```\n"
+            },
+            "question": {
+                "description": "Template for generating socratic questions from a prompt",
+                "dependency": ["task_prompt"],
+                "template": "You are a specialized prompt engineer with expertise in Socratic questioning and critical thinking.\nYour task is to generate insightful Socratic questions for a given task prompt, following these steps:\n\n1. COMPREHENSION PHASE\nAnalyze the task prompt delimited by triple backticks.\n\n2. QUESTION GENERATION PHASE\nGenerate questions that:\n- Probe underlying assumptions\n- Clarify conceptual understanding\n- Explore alternative perspectives\n- Examine implications and consequences\n- Challenge evidence and reasoning\n\n3. VALIDATION PHASE\nVerify that your questions:\n- Are genuinely Socratic in nature\n- Promote critical thinking\n- Are relevant to the task prompt\n- Avoid leading or rhetorical questions\n- Cover diverse aspects of the prompt\n\nOUTPUT:\nReturn your questions in a valid JSON format:\n\n{{'question': <question text>, 'purpos   e': <purpose of this question>, 'expected_insight': <what insight this might generate>, 'meta_question': <question about the questioning process itself>\n}}\n\nNow, here is the task prompt for your Socratic questioning:\n```\n{task_prompt}\n```"
+            }
+        },
+        "manipulation": {
+            "rewrite": {
+                "description": "Template for rewriting a prompt subject to feedback",
+                "dependency": ["task_prompt", "feedback"],
+                "template": "You are a specialised prompt engineer with expertise in prompt refinement, clarity enhancement, advanced NLP skills, and understanding of OpenAI GPT model.\nYour task is to rewrite a given prompt in order to address the specific feedback received, following these steps:\n\n1. COMPREHENSION PHASE\nAnalyse:\n- The task prompt delimited by triple backticks\n- The feedback received delimited by double backtricks\n\n2. REWRITING PHASE\nChoose from:\n- Restructure sentences within compartments (preserve semantics)\n- Use synonyms (respect specified restrictions)\n- Create concise or detailed version\n\n3. VALIDATION PHASE\nVerify:\n- Ensures the semantic meaning of the original prompt is preserved\n- Confirm all prompt components are properly rewritten and remain cohensive. \n\nSpecific Requirements:\n-DO NOT make any change to response format- DO NOT modify 'ITERATION' or 'K'\n- Preserve content in: curly brackets, square brackets, UPPERCASE text\n\nOUTPUT:\nIf audience specified:\n{{'role': string, 'task': string, 'purpose': string, 'audience': string, 'context': string, 'Instruction': string}}\n\nIf no audience specified: just say not applicable corresponding to audience.\n\nNow, here is the task prompt for your rewriting:\n```\n{task_prompt}\n```\n\n And the feedback received on the prompt is ``\n{feedback}\n``"
+            },
+            "rephrase": {
+                "description": "Template for rephrasing a prompt",
+                "dependency": ["task_prompt"],
+                "template": "You are a specialised prompt engineer with expertise in prompt refinement, clarity enhancement, advanced NLP skills, and understanding of OpenAI GPT model.\nYour task is to rewrite a given prompt in order to address the specific feedback received, following these steps:\n\n1. COMPREHENSION PHASE\nAnalyse:\n- The task prompt delimited by triple backticks\n- The feedback received delimited by double backtricks\n\n2. REWRITING PHASE\nChoose from:\n- Restructure sentences within compartments (preserve semantics)\n- Use synonyms (respect specified restrictions)\n- Create concise or detailed version\n\n3. VALIDATION PHASE\nVerify:\n- Ensures the semantic meaning of the original prompt is preserved\n- Confirm all prompt components are properly rewritten and remain cohensive. \n\nSpecific Requirements:\n-DO NOT make any change to response format- DO NOT modify 'ITERATION' or 'K'\n- Preserve content in: curly brackets, square brackets, UPPERCASE text\n\nOUTPUT:\nIf audience specified:\n{{'role': string, 'task': string, 'purpose': string, 'audience': string, 'context': string, 'Instruction': string}}\n\nIf no audience specified: just say not applicable corresponding to audience.\n\nNow, here is the task prompt for your rewriting:\n```\n{task_prompt}\n```"
+            },
+            "crossover": {
+                "description": "Template for combining prompts",
+                "dependency": ["task_prompt"],
+                "template": "You are a specialised prompt engineering with expertise in analyzing and combining prompts to create new, potentially more effective variations.\nYour task is to perform a crossover operation on two input prompts following these steps:\n\n1. ANALYSIS PHASE\nAnalyze the two prompts delimitered in triple backticks.\nBreak down each prompt into these components:\n- Core Objectives: What are the fundamental goals?\n- Constraints: What limitations or boundaries are set?\n- Role Definition: How is the role and persona defined?\n- Format Requirements: What structural elements are specified?\n- Special Instructions: What unique elements or requirements exist?\n\n2. IDENTIFICATION PHASE\nIdentify:\n- Complementary Elements: Which parts from each prompt could work well together?\n- Conflicting Elements: Which parts might clash or contradict?\n- Unique Strengths: What special features in each prompt stand out?\n- Common Ground: What shared elements exist between the prompts?\n\n3. CROSSOVER PHASE\nCreate a new prompt by:\n- Selecting the stronger elements from each parent prompt\n- Resolving any conflicts in a way that preserves the core objectives\n- Maintaining internal consistency\n- Preserving any critical constraints from either parent\n- Integrating complementary elements in a coherent way\n\n4. VALIDATION PHASE\nVerify the new prompt:\n- Ensures all core objectives are preserved\n- Maintains logical consistency\n- Preserves critical constraints\n- Improves upon both parent prompts\n- Remains clear and executable\n\nOUTPUT:\nReturn the crossed-over prompt in a valid JSON format:\n{{'role': string, 'task': string, 'purpose': string, 'audience': string, 'context': string, 'instruction': string}}\n\nREMEBER:\n- Preserve essential task-specific instructions from both parents\n- Maintain clarity and coherence in the combined prompt\n- Resolve contradictions in favor of the more specific or restrictive option\n- Keep the output format consistent with the input prompts' style\n\nNow, perform the crossover operation on the following prompts:\n```\n{task_prompt}.\n```"
+            },
+            "mutate": {
+                "description": "Template for mutating a prompt",
+                "dependency": ["task_prompt"],
+                "template": "You are a specialised prompt engineering with expertise in introducing controlled variations to prompts through mutation operations.\n Your task is to perform strategic mutations on an input prompt delimited by triple bacticks while preserving its core functionality. Follow these steps:\n\n1. ANALYSIS PHASE\nAnalyze the input prompt and map the prompt's structure into:\n- Core Components: Essential elements that must be preserved\n- Flexible Components: Elements that can be safely modified\n- Dependencies: Relationships between different parts\n- Critical Constraints: Non-negotiable boundaries\n- Style Elements: Tone, format, and presentation aspects\n\n2. MUTATION STRATEGY SELECTION\nChoose one or more mutation types based on the prompt's characteristics:\n\na) Expansion Mutations:\n- Add clarifying details\n- Introduce additional constraints\n- Expand role definitions\n- Include new edge cases\n- Add format specifications\n\nb) Reduction Mutations:\n- Remove redundant elements\n- Simplify complex instructions\n- Consolidate similar constraints\n- Streamline format requirements\n\nc) Substitution Mutations:\n- Replace role definitions with alternatives\n- Modify constraint boundaries\n- Alter format specifications\n- Update example types\n\nd) Restructuring Mutations:\n- Reorder instructions\n- Modify hierarchical relationships\n- Adjust dependency chains\n- Reorganize format elements\n\n3. MUTATION EXECUTION\nApply selected mutations while:\n- Maintaining prompt coherence\n- Preserving core functionality\n- Ensuring internal consistency\n- Respecting critical constraints\n- Introducing meaningful variation\n\n4. VALIDATION CHECKS\nVerify that the mutated prompt:\n- Maintains original core objectives\n- Preserves essential constraints\n- Remains executable and clear\n- Introduces beneficial variation\n- Avoids harmful contradictions\n\n5. MUTATION RATE CONTROL\nApply mutations with appropriate intensity:\n- Minor mutations: 1-2 small changes\n- Moderate mutations: 2-3 medium changes\n- Major mutations: 3-4 significant changes\n(Select based on desired variation level)\n\n6. OUTPUT\nReturn:\na) The mutated prompt\nb) List of applied mutations\nc) Rationale for each mutation\nd) Expected impact on prompt performance\ne) Potential risks or trade-offs\n\nOUTPUT:\nReturn the crossed-over prompt in a valid JSON format:\n{{'role': string, 'task': string, 'purpose': string, 'audience': string, 'context': string, 'instruction': string}}\n\nREMEMBER:\n- Never mutate core objectives\n- Maintain logical consistency\n- Ensure mutations serve a purpose\n- Preserve critical task-specific elements\n- Keep mutations aligned with original intent\n\nNow, perform the mutation operation on the provided prompt and return the result following this structure. \n\nNow, perform the mutation operation on the following prompt:\n```\n{task_prompt}\n```"
+            },
+            "expand": {
+                "description": "Template for expanding prompts",
+                "dependency": ["task_prompt"],                
+                "template": "You are a specialized prompt engineer with expertise in expanding concise prompts into more detailed and comprehensive versions.\n\nYour task is to expand the following prompt while preserving its core meaning and enhancing clarity:\nOriginal: {task_prompt}\n\nIn the EXPANSION PHASE, add relevant details to the prompt by considering:\n1. Core Objectives: What are the fundamental goals?\n2. Constraints: What limitations or boundaries are set?\n3. Role Definition: How is the role and persona defined?\n4. Format Requirements: What structural elements are specified?\n5. Special Instructions: What unique elements or requirements exist?\n\nIn the VALIDATION PHASE, verify that the expanded prompt:\n- Maintains original core objectives\n- Preserves essential constraints\n- Remains executable and clear\n- Introduces beneficial variation\n- Avoids harmful contradictions\n\nOUTPUT:\nReturn the expanded prompt in a valid JSON format:\n{{'role': string, 'task': string, 'purpose': string, 'audience': string, 'context': string, 'instruction': string}}\n\nREMEMBER:\n- Never mutate core objectives\n- Maintain logical consistency\n- Ensure additions serve a purpose\n- Preserve critical task-specific elements\n- Keep additions aligned with original intent\n\nNow, perform the expansion operation on the provided prompt and return the result following this structure.\n\nNow, perform the expansion operation on the following prompt:\n```\n{task_prompt}\n```"
+            },
+            "compress": {
+                "description": "Template for compressing prompts",
+                "dependency": ["task_prompt"],
+                "template": "You are a specialized prompt engineer with expertise in compressing prompts while preserving essential details.\n\nYour task is to compress the following prompt while maintaining its core meaning and enhancing clarity:\nOriginal: {task_prompt}\nRequirements:\n1. Maintain key concepts\n2. Enhance clarity\n3. Remove unnecessary details\n\nIn the COMPRESSION PHASE, distill the prompt into a concise version that meets the requirements.\n\nIn the VALIDATION PHASE, verify that the compressed prompt:\n- Maintains original core objectives\n- Preserves essential constraints\n- Remains executable and clear\n- Introduces beneficial variation\n- Avoids harmful contradictions\n\nOUTPUT:\nReturn the compressed prompt in a valid JSON format:\n{{'role': string, 'task': string, 'purpose': string, 'audience': string, 'context': string, 'instruction': string}}\n\nREMEMBER:\n- Never mutate core objectives\n- Maintain logical consistency\n- Ensure removals serve a purpose\n- Preserve critical task-specific elements\n- Keep removals aligned with original intent\n\nNow, perform the compression operation on the provided prompt and return the result following this structure.\n\nNow, perform the compression operation on the following prompt:\n```\n{task_prompt}\n```"
+            }
+        },
+        "reasoning": {
+            "decompose": {
+                "description": "Template for decomposing a complex problem into atomic subquestions",
+                "dependency": ["task_prompt"],
+                "template": "## Meta-Prompt: Problem Decomposition\n\nYou are provided with the following problem statement:\n\n> \"{task_prompt}\"\n\nYour task is to:\n1. Decompose this problem clearly into distinct, atomic subquestions.\n2. Identify explicitly if each subquestion is independent or depends on answers to other subquestions.\n3. Number each subquestion for clear referencing.\n\nOutput format (JSON):\n{{'subquestions': [{{'id': 1, 'subquestion': 'Subquestion text here', 'dependencies': [] empty if independent, or array of subquestion IDs it depends on}}, more subquestions... ] }}. Ensure your decomposition is:\n- Comprehensive (covers all aspects of the problem)\n- Atomic (each subquestion addresses one specific aspect)\n- Clearly structured (dependencies are explicitly stated)\n- Logically sound (the complete set of subquestions is equivalent to the original problem)"
+            },
+            "dagify": {
+                "description": "Template for constructing a dependency graph (DAG) from decomposed subquestions",
+                "dependency": ["task_prompt", "decomposition"],
+                "template": "## Meta-Prompt: Dependency Graph Construction (DAG)\n\nBased on the problem:\n\n> \"{task_prompt}\"\n\nAnd the subquestions identified in the previous step:\n\n```\n{decomposition}\n```\n\nYour task is to:\n1. Clearly define a Directed Acyclic Graph (DAG) that represents dependencies between subquestions.\n2. Each subquestion forms a node in this graph.\n3. Explicitly connect nodes with directed edges, showing dependency direction clearly.\n\nOutput format (JSON):\n{{\n  \"adjacency_list\": {\n    \"1\": [], // Subquestion 1 depends on no other subquestions\n    \"2\": [1], // Subquestion 2 depends on subquestion 1\n    \"3\": [1, 2] // Subquestion 3 depends on subquestions 1 and 2\n    // more entries...\n  },\n  \"independent_nodes\": [1], // List of subquestion IDs that have no dependencies\n  \"leaf_nodes\": [3] // List of subquestion IDs that no other subquestion depends on\n}\n\nEnsure your DAG is:\n- Complete (includes all subquestions)\n- Acyclic (contains no circular dependencies)\n- Correctly represents the dependency relationships\n- Identifies independent nodes that can be solved first"
+            },
+            "contract": {
+                "description": "Template for contracting independent subquestions into a simpler atomic state",
+                "dependency": ["task_prompt", "decomposition", "dag"],
+                "template": "## Meta-Prompt: Contraction (Atomic State Simplification)\n\nBased on the problem:\n\n> \"{task_prompt}\"\n\nThe decomposition:\n```\n{decomposition}\n```\n\nAnd the dependency graph:\n```\n{dag}\n```\n\nYour task is to:\n1. Identify the independent subquestions (those with no dependencies).\n2. Solve these independent subquestions.\n3. Integrate these solutions as known conditions.\n4. Formulate the remaining dependent subquestions into a single, simplified, and atomic question.\n\nOutput format (JSON):\n{\n  \"known_conditions\": {\n    \"subquestion_id\": \"solution\",\n    // more solved independent subquestions...\n  },\n  \"contracted_question\": \"Clearly formulated single question that incorporates known conditions\"\n}\n\nEnsure your contraction:\n- Correctly solves independent subquestions\n- Integrates these solutions as known conditions\n- Simplifies the remaining problem\n- Maintains logical equivalence to the original problem\n- Is self-contained (can be understood without reference to previous steps)"
+            },
+            "validate": {
+                "description": "Template for validating if the contracted question preserves logical equivalence and satisfies the Markov property",
+                "dependency": ["task_prompt", "contraction"],
+                "template": "## Meta-Prompt: Iterative Validation (Markov Property & Logical Equivalence)\n\nGiven the original problem:\n\n> \"{task_prompt}\"\n\nAnd the contracted atomic question state:\n```\n{contraction}\n```\n\nYour task is to evaluate explicitly whether:\n1. The contracted question is logically equivalent to the original problem.\n2. It satisfies the Markov property (only depending on the immediate previous question state, not historical states).\n\nOutput format (JSON):\n{\n  \"logical_equivalence\": {\n    \"assessment\": true/false,\n    \"explanation\": \"Detailed explanation of why the contracted question is or is not logically equivalent\"\n  },\n  \"markov_property\": {\n    \"assessment\": true/false,\n    \"explanation\": \"Detailed explanation of why the contracted question does or does not satisfy the Markov property\"\n  },\n  \"corrections_needed\": [\n    \"Specific correction 1\",\n    \"Specific correction 2\"\n    // empty if no corrections needed\n  ]\n}\n\nEnsure your validation:\n- Thoroughly evaluates logical equivalence\n- Correctly assesses Markov property compliance\n- Provides specific corrections if needed\n- Is detailed and well-reasoned"
+            },
+            "terminate": {
+                "description": "Template for determining if the current state can yield the final solution or requires further iteration",
+                "dependency": ["task_prompt", "contraction", "validation"],
+                "template": "## Meta-Prompt: Termination Decision & Solution Generation\n\nBased on the original problem:\n\n> \"{task_prompt}\"\n\nThe contracted question:\n```\n{contraction}\n```\n\nAnd the validation results:\n```\n{validation}\n```\n\nYour task is to:\n1. Determine if the current atomic question state is simple enough to solve directly without additional decomposition.\n2. If YES: Directly compute the solution and output it explicitly.\n3. If NO: Clearly state the reason and indicate that a new decomposition iteration is needed.\n\nOutput format (JSON):\n{\n  \"decision\": \"terminate\"/\"continue\",\n  \"reason\": \"Detailed explanation of the decision\",\n  \"final_answer\": \"Explicit answer to the original problem (only if decision is 'terminate')\"\n}\n\nEnsure your decision:\n- Is based on a thorough assessment of the current state\n- Provides a clear rationale\n- Includes a complete solution if terminating\n- Identifies specific complexities if continuing"
+            },
+            "predict": {
+                "description": "Template for predicting the next subquestion to solve",
+                "dependency": ["task_prompt", "response"],
+                "template": "You are a exceptional problem solver. You are given a task prompt and a response to the task prompt. Your task is to predict the next subquestion that must be solved in order to yield the final solution to the original task.\n\nTASK PROMPT:\n```\n{task_prompt}\n```\n\nRESPONSE:\n```\n{response}\n```\n\nYour task is to predict the next subquestion to solve.\n\nOUTPUT:\nReturn a valid JSON format:\n{{'subquestion': a clear and precise description of one predicted subquestion or just say 'none' if no subquestion can be predicted (i.e. terminated)}}\nEnsure your prediction:\n- Is based on a thorough assessment of the current state\n- Provides a clear rationale\n- Identifies specific complexities if continuing"
+            }
+        }
+    },
+    "metaresponse": {
+        "evaluation": {
+            "select": {
+                "description": "Template for selecting the best response from a list of responses corresponding to the given prompt, where evaluation criteria is not available",
+                "dependency": ["task_prompt", "response"],
+                "template": "You are an expert in evaluating responses to a given task prompt. Please select the best response from the list of candidate responses, following these steps:\n\n1. COMPREHENSION PHASE\nAnalyze the task prompt delimited by triple backticks.\n\n2. SELECTION PHASE\nSelect the most relevant response from the list of provided responses.\n\n3. VALIDATION PHASE\nVerify the selection:\n- Ensures only one response is selected\n- Confirms the selected response is not empty\n- Validates the selected response against the other responses\n\nOUTPUT:\nReturn the selection in a valid JSON format:\n{\n'responses': [{{response_index: 0, select: true or false}}, {{response_index: 1, select: true or false}}, ...]\n}\n\nREMEMBER:\n- Select only one response\n- Exclude empty responses\n- Validate selection against other responses\n- Format output as valid JSON\n\nNow, perform the selection operation on the following prompt:\n```\n{task_prompt}\n```"
+            },
+            "criteria": {
+                "description": "Template for generating custom evaluation criteria",
+                "dependency": ["task_prompt"],
+                "template": "You are an expert in generating custom evaluation criteria for AI responses. Please generate evaluation criteria that will help assess the quality and effectiveness of responses to the task prompt delimited by triple backticks.\n\nCriteria should consider:\n1. Task-specific requirements and goals\n2. Domain-specific quality attributes\n3. Expected output characteristics\n4. Common pitfalls to avoid\n\nReturn the criteria in JSON format:\n{{\n'criteria': [\n{{'name': <criterion name> e.g. correctness,'description': <detailed description>,'scoring_guide': {{'1': '<description of poor performance>', '2': '<description of low performance>','3': '<description of adequate performance>', '4': '<description of good performance>', '5': '<description of exceptional performance>'}}, 'key_aspects': ['<list of specific points to evaluate>']}}\n], 'weights': {{'<criterion name>': <weight between 0 and 1>}}, 'rationale': <explanation of why these criteria are important for this task>}}\n\nREMEMBER:\n- Evaluation criteria should consider:\n   - Task-specific requirements and goals\n- Domain-specific quality attributes\n- Expected output characteristics\n- Common pitfalls to avoid\n\nNow, perform the evaluation criteria generation operation on the following prompt and return the result following this structure.\n\nNow, perform the criteria generation operation on the following prompt:\n```\n{task_prompt}\n```"
+            },
+            
+            "judge": {
+                "description": "Template for LLM-as-a-Judge evaluation",
+                "dependency": ["task_prompt", "response", "criteria"],
+                "template": "You are an exceptional judge with strong expertise in precisely and objectively assessing a response from language model against pre-defined criteria and the corresponding prompt.\n\nYour task is to thoroughly evaluate the given response based on specified evaluation criteria and the corresponding prompt.\n\nIn the ASSESSMENT PHASE, analyze the response against each criterion by considering:\n1. Accuracy: Does the response correctly address the prompt requirements?\n2. Completeness: Does the response cover all aspects of the prompt?\n3. Relevance: Is the content directly applicable to the prompt's request?\n4. Coherence: Is the response logically structured and well-organized?\n5. Specificity: Does the response provide concrete details rather than vague generalities?\n\nIn the SCORING PHASE, ensure your evaluation:\n- Uses the full scoring range (1-5) appropriately\n- Provides consistent scoring across all criteria\n- Maintains objectivity without personal bias\n- Considers both strengths and weaknesses\n- Aligns scores with the defined criteria descriptions\n\nOUTPUT:\nReturn the evaluation in a valid JSON format:\n{\n  'criteria': [\n    {'name': <criterion name>, 'score': integer between 1 and 5, 'justification': brief explanation for the score},\n    ...\n  ],\n  'overall_assessment': brief summary of the response quality\n}\n\nREMEMBER:\n- Score each criterion independently\n- Maintain consistency in your scoring approach\n- Support each score with specific examples from the response\n- Consider the context and purpose of the original prompt\n- Ensure your evaluation is balanced and fair\n\nNow, assess the quality of the following response corresponding to the given prompt and criteria:\nPROMPT:\n```\n{task_prompt}\n```\n\nRESPONSE:\n```\n{response}\n```\n\nCRITERIA:\n```\n{criteria}\n```"
+            },
+            "rank": {
+                "description": "Template for ranking responses based on quality without predefined set of evaluation criteria",
+                "dependency": ["task_prompt", "responses"],
+                "template": "You are a specialized evaluator with expertise in comparing and ranking multiple responses to the same prompt.\n\nYour task is to rank a set of candidate responses based on their quality and effectiveness, following these steps:\n\n1. COMPREHENSION PHASE\nAnalyze the task prompt delimited by triple backticks and understand its requirements.\n\n2. EVALUATION PHASE\nAssess each response in the provided set based on:\n- Accuracy: Correctness of information provided\n- Completeness: Coverage of all aspects of the prompt\n- Relevance: Focus on addressing the prompt directly\n- Clarity: Clear and well-structured presentation\n- Depth: Thoroughness and insight in the analysis\n\n3. RANKING PHASE\nRank the responses from best to worst, considering their relative strengths and weaknesses.\n\n4. VALIDATION PHASE\nVerify your ranking by:\n- Ensuring each response has been fairly evaluated\n- Confirming the ranking reflects meaningful quality differences\n- Checking that your justifications are consistent\n\nOUTPUT:\nReturn your ranking in a valid JSON format:\n{{'rankings': [{{'response_index': <index of response>, 'rank ': <position in ranking>, 'rationale ': <brief explanation of ranking>}}, ... ], 'summary': <brief explanation of overall ranking decisions>}}\n\nREMEMBER:\n- Evaluate each response independently before comparing\n- Consider both strengths and weaknesses\n- Provide specific reasons for each ranking position\n- Maintain consistency in your evaluation criteria\n- Ensure every response receives a unique rank\n\nNow, rank the following responses to the given prompt:\n\nPROMPT:\n```\n{task_prompt}\n```\n\nRESPONSES:\n```\n{responses}\n```"
+            },
+            "critic": {
+                "description": "Template for debating a response based on feedback",
+                "dependency": ["task_prompt", "response", "feedback"],
+                "template": "You are a specialized critic with expertise in analyzing and improving AI-generated responses.\n\nYour task is to critically evaluate a response based on provided feedback and suggest improvements, following these steps:\n\n1. COMPREHENSION PHASE\nAnalyze:\n- The original task prompt delimited by triple backticks\n- The response that was generated\n- The feedback provided about the response\n\n2. CRITICAL ANALYSIS PHASE\nIdentify:\n- Specific strengths in the response that should be preserved\n- Specific weaknesses or issues highlighted in the feedback\n- Additional issues not mentioned in the feedback\n- Opportunities for significant improvement\n\n3. IMPROVEMENT STRATEGY PHASE\nDevelop strategies to:\n- Address each identified issue\n- Maintain or enhance existing strengths\n- Improve overall quality and effectiveness\n\n4. VALIDATION PHASE\nVerify that your critique:\n- Addresses all points in the feedback\n- Is constructive and actionable\n- Maintains the core purpose of the original response\n- Provides specific, concrete suggestions\n\nOUTPUT:\nReturn your critique in a valid JSON format:\n{{'critique': <detailed analysis of the response>, 'strengths': [ <specific strength 1>, <specific strength 2>, ...], 'weaknesses': [<specific weakness 1>, <specific weakness 2>, ...], 'improvement_suggestions': [<specific suggestion 1>, <specific suggestion 2>, ...], 'revised_response': <improved version of the response> }}\n\nREMEMBER:\n- Be specific and concrete in your analysis\n- Balance criticism with recognition of strengths\n- Ensure suggestions are practical and implementable\n- Focus on substantive improvements, not just stylistic changes\n\nNow, critique the following response based on the provided feedback:\n\nPROMPT:\n```\n{task_prompt}\n```\n\nRESPONSE:\n```\n{response}\n```\n\nFEEDBACK:\n```\n{feedback}\n```"
+            },
+            "reflect": {
+                "description": "Template for reflecting on areas to improve a response corresponding to the prompt and the evaluation outcome",
+                "dependency": ["task_prompt", "response", "feedback"],
+                "template": "You are a specialized reflection expert with expertise in meta-analysis of AI-generated content.\n\nYour task is to deeply reflect on a response to identify strengths, weaknesses, and areas for improvement, following these steps:\n\n1. COMPREHENSION PHASE\nAnalyze:\n- The original task prompt delimited by triple backticks\n- The response that was generated\n- Any feedback provided (if available)\n\n2. REFLECTION PHASE\nConsider:\n- How effectively the response addresses the prompt requirements\n- The logical structure and flow of the response\n- The accuracy and relevance of information provided\n- The clarity and accessibility of the explanation\n- The completeness of the answer\n\n3. ALTERNATIVE APPROACHES PHASE\nIdentify:\n- Different strategies that could have been used\n- Alternative perspectives that could have been considered\n- Different structures or formats that might have been more effective\n\n4. LEARNING POINTS PHASE\nExtract:\n- Key insights for improving future responses\n- Patterns of strengths to maintain\n- Patterns of weaknesses to address\n\nOUTPUT:\nReturn your reflection in a valid JSON format:\n{{'effectiveness_analysis': <analysis of how well the response addresses the prompt>, 'strengths': [<specific strength 1>, <specific strength 2>, ...], 'areas_for_improvement':[<specific area 1>, <specific area 2>, ...], 'alternative_approaches ':[<alternative approach 1>, <alternative approach 2>, ...], 'key_learning_points': [<learning point 1>, <learning point 2>, ...]\n}}\n\nREMEMBER:\n- Focus on substantive analysis, not superficial observations\n- Consider both content and presentation\n- Be specific about what works and what doesn't\n- Suggest concrete alternatives where appropriate\n\nNow, reflect on the following response to the given prompt:\n\nPROMPT:\n```\n{task_prompt}\n```\n\nRESPONSE:\n```\n{response}\n```\n\nFEEDBACK (if provided):\n```\n{feedback}\n```"
+            }
+        },
+        "manipulation": {
+            "refine": {
+                "description": "Template for refining a response based on evaluation feedback",
+                "dependency": ["task_prompt", "response", "feedback"],
+                "template": "You are a specialized refinement expert with expertise in improving AI-generated content based on feedback.\n\nYour task is to refine a response by addressing specific feedback while preserving its strengths, following these steps:\n\n1. COMPREHENSION PHASE\nAnalyze:\n- The original task prompt delimited by triple backticks\n- The response that was generated\n- The feedback provided about the response\n\n2. STRENGTHS IDENTIFICATION PHASE\nIdentify specific elements of the response that are effective and should be preserved, such as:\n- Accurate information\n- Clear explanations\n- Logical structure\n- Comprehensive coverage\n- Engaging presentation\n\n3. IMPROVEMENT PLANNING PHASE\nDevelop a plan to address each point of feedback while maintaining identified strengths.\n\n4. REFINEMENT EXECUTION PHASE\nImplement your planned improvements to create a refined response that:\n- Addresses all feedback points\n- Maintains or enhances existing strengths\n- Improves overall quality and effectiveness\n\n5. VALIDATION PHASE\nVerify that your refined response:\n- Successfully addresses all feedback\n- Preserves the valuable elements of the original\n- Maintains coherence and logical flow\n- Fulfills the requirements of the original prompt\n\nOUTPUT:\nReturn your refinement in a valid JSON format:\n{{'refined_response ':<improved response text>, 'improvements_made': [<specific improvement 1>, <specific improvement 2>, ...], 'retained_strengths': [<specific strength 1>, <specific strength 2>, ...], 'confidence_score': <score between 0 and 1 indicating confidence in improvements>}}\n\nREMEMBER:\n- Address all feedback points comprehensively\n- Preserve what works well in the original response\n- Ensure the refined response remains true to the original prompt\n- Make substantive improvements, not just superficial changes\n\nNow, refine the following response based on the provided feedback:\n\nPROMPT:\n```\n{task_prompt}\n```\n\nRESPONSE:\n```\n{response}\n```\n\nFEEDBACK:\n```\n{feedback}\n```"
+            },
+            "synthesize": {
+                "description": "Template for synthesizing responses",
+                "dependency": ["task_prompt","responses"],
+                "template": "You are a specialized synthesis expert with expertise in combining multiple perspectives into a comprehensive whole.\n\nYour task is to synthesize multiple responses into a single, coherent, and comprehensive answer to the original task, following these steps:\n\n1. COMPREHENSION PHASE\nAnalyze:\n- The set of candidate responses provided\n- The context in which these responses were generated (if provided)\n\n2. ANALYSIS PHASE\nIdentify:\n- Key insights and information from each response\n- Common themes and patterns across responses\n- Unique contributions from individual responses\n- Any contradictions or inconsistencies between responses\n\n3. SYNTHESIS PHASE\nCreate a comprehensive answer by:\n- Integrating key insights from all responses\n- Resolving contradictions with reasoned judgment\n- Organizing information in a logical structure\n- Ensuring all important aspects are covered\n- Maintaining accuracy and clarity throughout\n\n4. VALIDATION PHASE\nVerify that your synthesized response:\n- Captures the value from each input response\n- Presents a coherent and unified perspective\n- Addresses all aspects of the original context\n- Improves upon each individual response\n\nOUTPUT:\nReturn your synthesized response preserving the format from the provided RESPONSES.\n\nREMEMBER:\n- Synthesis is more than concatenation—create something greater than the sum of its parts\n- Maintain accuracy while integrating different perspectives\n- Ensure logical flow and coherence in the final response\n- Address any contradictions or inconsistencies between responses.\n ORIGINAL TASK:\n```\n{task_prompt}\n```\nNow synthesize the following responses:\n\nRESPONSES:\n```\n{responses}\n```"
+            },
+            "calibrate": {
+                "description": "Template for calibrating a response based on other example responses",
+                "dependency": ["task_prompt", "response", "feedback"],
+                "template": "You are an expert AI assistant tasked with improving a response based on evaluation feedback.\n\nOriginal Task:\n{task_prompt}\n\nOriginal Response:\n{response}\n\nEvaluation Feedback:\n{feedback}\n\nYour task is to generate an improved response that addresses the identified issues while maintaining the strengths. Consider:\n1. All feedback points from the evaluation\n2. The original task requirements\n3. Maintaining accuracy and relevance\n4. Improving clarity and completeness\n\nProvide your improved response in JSON format:\n{{refined_response': <improved response text>, 'improvements_made': [<list of specific improvements made>], 'retained_strengths': [<list of original strengths that were preserved>], 'confidence_score': <score between 0 and 1 indicating confidence in improvements> }}"
+            },    
+            "defend": {
+                "description": "Template for defending a response based on feedback",
+                "dependency": ["task_prompt", "response", "feedback"],
+                "template": "You are a specialized defense expert with expertise in critically evaluating feedback and defending or improving responses as appropriate.\n\nYour task is to analyze feedback on a response, determine its validity, and either defend the original response or improve it where necessary, following these steps:\n\n1. COMPREHENSION PHASE\nAnalyze:\n- The original task prompt delimited by triple backticks\n- The response that was generated\n- The feedback provided about the response\n\n2. FEEDBACK EVALUATION PHASE\nAssess each point of feedback for:\n- Validity: Is the criticism accurate and fair?\n- Relevance: Does it address important aspects of the response?\n- Actionability: Can it be used to make meaningful improvements?\n\n3. DEFENSE STRATEGY PHASE\nFor valid feedback:\n- Acknowledge the point and plan improvements\n\nFor questionable feedback:\n- Develop reasoned arguments supporting the original approach\n- Provide evidence or reasoning that counters the feedback\n\n4. RESPONSE REFINEMENT PHASE\nBased on your evaluation:\n- Defend elements that were appropriately handled in the original response\n- Improve elements where the feedback was valid\n- Maintain the overall quality and purpose of the response\n\n5. VALIDATION PHASE\nVerify that your defense and refinement:\n- Addresses all feedback points with reasoned responses\n- Maintains or improves the quality of the original response\n- Remains true to the requirements of the original prompt\n\nOUTPUT:\nReturn your defense and refinement in a valid JSON format:\n{{ 'feedback_evaluation': [{{feedback_point': <summary of feedback point>, 'validity': true or false, 'justification': <reason for validity assessment>}, ... ], 'defense_arguments': [<defense argument 1>, <defense argument 2>, ...], 'improvements_made': [<improvement 1>, <improvement 2>, ...], 'refined_response': <improved version of the response that defends valid aspects> }}\n\nREMEMBER:\n- Evaluate feedback critically but fairly\n- Defend with evidence and reasoning, not just assertions\n- Be willing to acknowledge valid criticism\n- Focus on substantive issues, not minor details\n\nNow, defend or refine the following response based on the provided feedback:\n\nPROMPT:\n```\n{task_prompt}\n```\n\nRESPONSE:\n```\n{response}\n```\n\nFEEDBACK:\n```\n{feedback}\n```"
+            }
+        }
+    },
+    "metaworkflow":{
+        "dbbuilder":{
+            "crossreference": {
+                "description": "Template for extracting information from a document",
+                "dependency": ["document"],
+                "template": "You are an expert at identifying cross-references between text chunks.\n\nAnalyze the given text chunk and identify any references or citations to other concepts, documents, or sections.\n\nText chunk to analyze:\n{chunk_content}\n\nYour task:\n1. Identify any explicit references (citations, quotes, mentions of other documents)\n2. Identify any implicit references (concepts, ideas, or topics that relate to other content)\n3. Extract key entities, terms, or phrases that could connect to other chunks\n\nRespond with a JSON object containing these cross-references:\n{{'references': ['reference1', 'reference2', ...]}}. Hewe, "
+            }
+        },
+        "planner": {
+            "select": {
+                "description": "Template for selecting the best meta prompt",
+                "dependency": ["meta_prompt_library"],
+                "template": "TBC"
+            },
+            "sequence": {
+                "description": "Template for sequencing meta prompts",
+                "dependency": ["meta_prompt_library"],
+                "template": "TBC"
+            },
+            "select_task_prompts": {
+                "description": "Template for selecting relevant task prompts based on a user goal",
+                "dependency": ["goal", "task_prompt_library"],
+                "template": "## Meta-Prompt: Task Prompt Selection\n\nYou are an expert AI task planner. Given a user goal and a library of available task prompts, your job is to select the most relevant task prompts that will help achieve this goal.\n\nUser Goal:\n\"{goal}\"\n\nAvailable Task Prompts Library:\n```\n{task_prompt_library}\n```\n\nYour task is to:\n1. Analyze the user goal to understand its requirements and objectives\n2. Evaluate each task prompt in the library for relevance to the goal\n3. Select the most appropriate task prompts that collectively address all aspects of the goal\n4. Provide reasoning for each selection\n\nConsider these selection criteria:\n- Relevance: How directly the prompt addresses aspects of the goal\n- Coverage: How the selected prompts collectively cover all aspects of the goal\n- Efficiency: Avoiding redundant or overlapping prompts\n- Completeness: Ensuring all necessary steps to achieve the goal are covered\n\nOutput format (JSON):\n{\n  \"selected_prompts\": [\n    {\n      \"prompt_id\": \"ID of the selected prompt\",\n      \"relevance_score\": 0.0-1.0,\n      \"relevance_reasoning\": \"Explanation of why this prompt is relevant\"\n    },\n    // Additional selected prompts...\n  ],\n  \"selection_reasoning\": \"Overall explanation of your selection strategy and how these prompts collectively address the goal\"\n}\n\nEnsure your selection:\n- Is comprehensive (addresses all aspects of the goal)\n- Is efficient (avoids unnecessary redundancy)\n- Includes only truly relevant prompts\n- Provides clear reasoning for each selection"
+            },
+            "sequence_task_prompts": {
+                "description": "Template for sequencing selected task prompts into an optimal execution flow",
+                "dependency": ["goal", "selected_prompts"],
+                "template": "## Meta-Prompt: Task Prompt Sequencing\n\nYou are an expert AI workflow designer. Given a user goal and a set of selected task prompts, your job is to determine the optimal sequence for executing these prompts to achieve the goal efficiently.\n\nUser Goal:\n\"{goal}\"\n\nSelected Task Prompts:\n```\n{selected_prompts}\n```\n\nYour task is to:\n1. Analyze the dependencies between the selected task prompts\n2. Determine the logical flow of execution\n3. Create a directed graph representing the execution flow\n4. Optimize the flow for efficiency and parallelism where possible\n\nConsider these sequencing principles:\n- Dependency satisfaction: Tasks that produce outputs needed by other tasks must come first\n- Information flow: How data and insights flow between tasks\n- Logical progression: Moving from simple to complex, or from analysis to synthesis\n- Parallelization: Identifying tasks that can run concurrently\n\nOutput format (JSON):\n{\n  \"nodes\": {\n    \"node_1\": {\n      \"task_prompt_id\": \"ID of the prompt\",\n      \"task_summary\": \"Brief description of the task\",\n      \"task_type\": \"Type of task (e.g., deduction, classification, etc.)\"\n    },\n    // Additional nodes...\n  },\n  \"edges\": [\n    {\n      \"source\": \"node_X\",\n      \"target\": \"node_Y\"\n    },\n    // Additional edges...\n  ]\n}\n\nEnsure your sequence:\n- Respects all logical dependencies\n- Optimizes for efficient execution\n- Creates a valid directed acyclic graph (no cycles)\n- Follows the exact format of prompt_flow_config.json"
+            }
+        },
+        "executor": {
+            "placeholder": {
+                "description": "Template for executing a meta prompt",
+                "dependency": ["meta_prompt", "document"],
+                "template": "TBC"
+            }
+        },
+        "retriever": {
+            "query_augment": {
+                "description": "Template for selecting the best document from a list of documents",
+                "dependency": ["document"],
+                "template": "TBC"
+            },
+            "query_predict": {
+                "description": "Template for selecting the best document from a list of documents",
+                "dependency": ["document"],
+                "template": "TBC"
+            },
+            "query_rephrase": {
+                "description": "Template for selecting the best document from a list of documents",
+                "dependency": ["document"],
+                "template": "TBC"
+            },
+            "query_decompose": {
+                "description": "Template for selecting the best document from a list of documents",
+                "dependency": ["document"],
+                "template": "TBC"
+            },
+            "query_hypothesize": {
+                "description": "Template for selecting the best document from a list of documents",
+                "dependency": ["document"],
+                "template": "TBC"
+            }
+        }
+    },
+    "affix": {
+        "chain_of_thought": {
+            "prefix": {
+                "task": "",
+                "instruction": "",
+                "response_format": ""
+            },
+            "postfix": {
+                "task": "",
+                "instruction": "",
+                "response_format": ""
+            },
+            "replace": {
+                "task": "",
+                "instruction": "To solve this problem, let's:\n1. Break down the task into clear, sequential steps.\n2. Think through each step carefully, one at a time.\n3. Articulate your reasoning process explicitly for each step.\n4. Connect each step logically to the next.\n5. Show your thoughts and rationale clearly.\n6. Verify your answer by reviewing the entire chain of reasoning.\n\nThroughout your reasoning:\n- Express your thoughts in a step-by-step manner\n- Explain why you're taking each step\n- Make your logic transparent and explicit\n- Connect intermediate conclusions to reach the final answer.",
+                "response_format": ""
+            }
+        },
+        "tree_of_thought": {
+            "prefix": {
+                "task": "",
+                "instruction": "",
+                "response_format": ""
+            },
+            "postfix": {
+                "task": "",
+                "instruction": "",
+                "response_format": ""
+            },
+            "replace": {
+                "task": "",
+                "instruction": "To solve this problem, use Tree of Thoughts reasoning:\n\n1. Break down the problem into sub-problems.\n2. Generate multiple (2-3) initial thoughts/approaches for each sub-problem.\n3. Evaluate the promising paths for each approach.\n4. Explore the most promising paths by taking a few steps along each.\n5. Backtrack if you reach a dead end and try another branch of the tree.\n6. Use effective tree traversal strategies (depth-first or breadth-first) depending on the problem.\n7. After exploring multiple branches of the reasoning tree, determine the most effective solution.\n\nThroughout your reasoning:\n- Explicitly state your thought process\n- Consider alternative branches in your reasoning tree\n- Evaluate the pros and cons of each path before traversing deeper\n- Prune unproductive branches early\n- Make deliberate decisions about which parts of the tree to explore further",
+                "response_format": ""
+            }
+        },
+        "program_synthesis": {
+            "postfix": {
+                "task": "",
+                "instruction": "",
+                "response_format": ""
+            },
+            "prefix": {
+                "task": "",
+                "instruction": "",
+                "response_format": ""
+            },
+            "replace": {
+                "task": "",
+                "instruction": "To solve this problem, use Program Synthesis reasoning:\n1. First, express the problem as a programming task.\n2. Write pseudocode or actual code that would solve the problem.\n3. Include comments that explain your reasoning for each code block.\n4. Trace through the execution of your code with example inputs if applicable.\n5. Convert your code's logic back into natural language explanations.\n6. Connect your code-based solution to the original problem domain.\n\nThroughout your reasoning:\n- Think computationally about the problem\n- Define variables, functions, and operations clearly\n- Use algorithmic thinking to break down complex processes\n- Demonstrate how the code would execute step-by-step\n- Translate technical solutions back into domain-specific terms",
+                "response_format": ""
+            }
+        },
+        "deep_thought": {
+            "postfix": {
+                "task": "",
+                "instruction": "",
+                "response_format": ""
+            },
+            "prefix": {
+                "task": "",
+                "instruction": "",
+                "response_format": ""
+            },
+            "replace": {
+                "task": "",
+                "instruction": "To solve this problem, use Deep Thinking reasoning:\n1. Consider the problem from multiple perspectives and levels of abstraction.\n2. Identify underlying principles, patterns, and connections.\n3. Question assumptions and explore counterfactuals.\n4. Draw analogies to similar problems or domains.\n5. Consider long-term implications and broader context.\n6. Synthesize insights into a comprehensive understanding.\n\nThroughout your reasoning:\n- Engage with the problem at a conceptual level\n- Explore the problem space thoroughly before converging on a solution\n- Consider both concrete details and abstract principles\n- Make connections to relevant knowledge and frameworks\n- Reflect on the quality and limitations of your reasoning",
+                "response_format": ""
+            }
+        }
+    }
+}
