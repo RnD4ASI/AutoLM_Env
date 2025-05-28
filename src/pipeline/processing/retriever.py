@@ -1,5 +1,14 @@
+import pandas as pd
+import pandas as pd
+import pandas as pd
+import pandas as pd
 import json
 import os
+import datetime # Already present, but good to confirm
+# Ensure datetime is available if needed by other parts of the file, though not directly by parquet loading.
+import datetime
+import datetime # Already present, but good to confirm
+import datetime
 import re
 import time
 import traceback
@@ -398,21 +407,47 @@ class VectorRetriever:
     - Configurable retrieval topology
     """
     
-    def __init__(self, vector_db=None, embedding_model=None, generator=None):
+    def __init__(self, vector_db_path: Optional[Union[str, Path, pd.DataFrame]] = None, generator: Optional[Generator] = None, embedding_model: Optional[str] = None):
         """Initialize VectorRetriever with configurable components.
         
         Args:
-            vector_db: Vector database instance or path to use for retrieval
-            embedding_model: Name or instance of the embedding model to use for semantic search
-            generator: Generator instance for embeddings, completions, and query processing
+            vector_db_path: Path to the vector database Parquet file or a pre-loaded DataFrame.
+            generator: Generator instance for embeddings, completions, and query processing.
+            embedding_model: Default embedding model to use if not specified in search config.
         """
+        logger.debug(f"Initializing VectorRetriever with DB path: {vector_db_path}")
         # Core components
-        self.vector_db = vector_db
+        self.vector_df = None
+        self.vector_db_path = None
         self.generator = generator if generator else Generator()
-        # self.embedding_model = embedding_model
-        
+        self.embedding_model = embedding_model # Store default embedding model
+
+        if isinstance(vector_db_path, (str, Path)):
+            self.vector_db_path = Path(vector_db_path)
+            if self.vector_db_path.exists() and self.vector_db_path.suffix == '.parquet':
+                logger.info(f"Loading VectorDB from Parquet file: {self.vector_db_path}")
+                self.vector_df = pd.read_parquet(self.vector_db_path)
+                logger.info(f"VectorDB loaded with {len(self.vector_df)} entries.")
+            else:
+                logger.error(f"VectorDB Parquet file not found or invalid: {self.vector_db_path}")
+                # Initialize an empty DataFrame with expected columns to prevent errors downstream
+                # These columns are based on what _get_corpus_from_vector_db expects
+                self.vector_df = pd.DataFrame(columns=['chunk_id', 'corpus', 'corpus_vector', 
+                                                       'document_id', 'document_name', 'reference', 
+                                                       'hierarchy', 'source', 'level', 'embedding_model',
+                                                       'heading', 'content_type']) # Added new optional fields
+        elif isinstance(vector_db_path, pd.DataFrame):
+            logger.info("Loading VectorDB from pre-loaded DataFrame.")
+            self.vector_df = vector_db_path
+        else:
+            logger.warning("No VectorDB path or DataFrame provided. VectorRetriever will operate on an empty dataset.")
+            self.vector_df = pd.DataFrame(columns=['chunk_id', 'corpus', 'corpus_vector',
+                                                       'document_id', 'document_name', 'reference',
+                                                       'hierarchy', 'source', 'level', 'embedding_model',
+                                                       'heading', 'content_type'])
+
+
         # Initialize component processors
-        # self.embedding_model = self.generator.get_embeddings(self.embedding_model)
         self.query_processor = QueryProcessor(generator=self.generator)
         self.rerank_processor = RerankProcessor(generator=self.generator)
         
@@ -507,19 +542,10 @@ class VectorRetriever:
             
         logger.debug(f"Retrieval configuration: {config}")
         
-        # Get corpus from vector_db (implementation dependent on vector_db type)
-        if not self.vector_db:
-            logger.error("No vector database provided")
-            return []
-            
         # Get base corpus from vector database
-        try:
-            corpus = self._get_corpus_from_vector_db()
-            if not corpus:
-                logger.warning("Empty corpus from vector database")
-                return []
-        except Exception as e:
-            logger.error(f"Failed to get corpus from vector database: {e}")
+        corpus = self._get_corpus_from_vector_db() # This now processes self.vector_df
+        if not corpus: # Check if the processed list is empty
+            logger.warning("Corpus is empty after processing vector_df. No data to retrieve.")
             return []
         
         # ===== 1. Query Preprocessing with Multiple Paths =====
@@ -741,73 +767,40 @@ class VectorRetriever:
         Returns:
             List[Dict[str, Any]]: List of documents with content, metadata, and chunk IDs
         """
-        if not self.vector_db:
-            logger.warning("No vector database provided")
+        if self.vector_df is None or self.vector_df.empty:
+            logger.warning("Vector DataFrame is None or empty in _get_corpus_from_vector_db.")
             return []
             
         try:
-            corpus = []
+            corpus_list = []
+            for index, row in self.vector_df.iterrows():
+                # Ensure 'embedding' uses 'corpus_vector' primarily, or 'embedding' if that's the column name.
+                # The schema uses 'corpus_vector'.
+                embedding_data = row.get('corpus_vector', row.get('embedding', [])) # Default to empty list if neither found
+                
+                # Construct metadata: include all columns except the primary ones being mapped.
+                metadata = row.to_dict()
+                # Remove fields that are explicitly mapped to top-level keys in processed_doc to avoid duplication.
+                # Also remove any vector columns from metadata to keep it light.
+                # Assuming 'chunk_id', 'corpus', 'corpus_vector', 'hierarchy_vector' are primary or vector columns.
+                # Other columns like 'document_id', 'document_name', 'reference', etc., are good metadata.
+                primary_fields_to_exclude = {'chunk_id', 'corpus', 'corpus_vector', 'hierarchy_vector', 'embedding'}
+                metadata = {k: v for k, v in metadata.items() if k not in primary_fields_to_exclude}
+
+                processed_doc = {
+                    'id': row.get('chunk_id', str(index)), 
+                    'content': row.get('corpus', ''),      
+                    'embedding': embedding_data,      
+                    'metadata': metadata # Store all other columns as metadata
+                }
+                corpus_list.append(processed_doc)
             
-            # Handle different vector DB types
-            if isinstance(self.vector_db, list):
-                # Vector DB is already a list of documents
-                logger.debug("Using provided list as vector database")
-                raw_corpus = self.vector_db
-            elif isinstance(self.vector_db, str) and os.path.exists(self.vector_db):
-                # Vector DB is a file path
-                logger.debug(f"Loading vector database from file: {self.vector_db}")
-                try:
-                    with open(self.vector_db, 'r') as f:
-                        raw_corpus = json.load(f)
-                except Exception as file_error:
-                    logger.error(f"Failed to load vector database from file: {file_error}")
-                    return []
-            elif hasattr(self.vector_db, 'get_documents'):
-                # Vector DB is an object with get_documents method
-                logger.debug("Using get_documents method from vector database object")
-                raw_corpus = self.vector_db.get_documents()
-            elif hasattr(self.vector_db, 'documents'):
-                # Vector DB is an object with documents attribute
-                logger.debug("Using documents attribute from vector database object")
-                raw_corpus = self.vector_db.documents
-            else:
-                logger.error("Unsupported vector database type")
-                return []
-            
-            # Process and normalize corpus entries
-            for i, doc in enumerate(raw_corpus):
-                if isinstance(doc, dict):
-                    # Ensure required fields are present
-                    processed_doc = {
-                        'id': doc.get('chunk_id', doc.get('id', str(i))),  # Prioritize chunk_id as per schema
-                        'content': doc.get('corpus', doc.get('content', '')),  # Support both 'corpus' and 'content' fields
-                        'embedding': doc.get('corpus_vector', doc.get('embedding', [])),  # Support both naming conventions
-                        'metadata': {}
-                    }
-                    
-                    # Extract metadata fields according to schema
-                    metadata_fields = [
-                        'document_id', 'document_name', 'reference', 'hierarchy', 
-                        'source', 'level', 'embedding_model'
-                    ]
-                    
-                    for field in metadata_fields:
-                        if field in doc:
-                            processed_doc['metadata'][field] = doc[field]
-                    
-                    # Add any additional metadata fields that might be present
-                    if 'metadata' in doc and isinstance(doc['metadata'], dict):
-                        processed_doc['metadata'].update(doc['metadata'])
-                    
-                    corpus.append(processed_doc)
-                else:
-                    logger.warning(f"Skipping non-dictionary document at index {i}")
-            
-            logger.debug(f"Extracted {len(corpus)} documents from vector database")
-            return corpus
+            logger.debug(f"Transformed {len(corpus_list)} documents from vector_df to list format.")
+            return corpus_list
             
         except Exception as e:
-            logger.error(f"Error getting corpus from vector database: {e}")
+            logger.error(f"Error transforming vector_df to corpus list: {e}")
+            logger.debug(traceback.format_exc())
             return []
 
     def _semantic_search(self, query, corpus, top_k=None, top_p=None, embedding_model=None):
@@ -2900,39 +2893,34 @@ class MemoryRetriever:
     - Configurable retrieval topology
     """
     
-    def __init__(self, memory_db=None, generator=None, memory_type="episodic"):
+    def __init__(self, memory_db_path: Optional[Union[str, Path, pd.DataFrame]] = None, generator: Optional[Generator] = None, memory_type: str = "episodic"):
         """Initialize MemoryRetriever with configurable components.
         
         Args:
-            memory_db: Memory database instance or path to use for retrieval
-            generator: Generator instance for embeddings, completions, and query processing
-            memory_type: Type of memory to work with ("episodic" or "personality")
+            memory_db_path: Path to the memory Parquet file or a pre-loaded DataFrame.
+            generator: Generator instance for embeddings, completions, and query processing.
+            memory_type: Type of memory to work with ("episodic" or "personality").
         """
-        logger.debug("MemoryRetriever initialization started")
+        logger.debug(f"Initializing MemoryRetriever for '{memory_type}' memory from: {memory_db_path}")
         try:
             start_time = time.time()
             
-            # Core components
-            self.memory_db = memory_db
+            self.memory_df = None
+            self.memory_db_path = None
             self.generator = generator if generator else Generator()
             self.memory_type = memory_type
             
-            # Set up directory structure
-            self.db_dir = Path.cwd() / "db"
-            self.memory_dir = self.db_dir / "memory"
+            self.db_dir = Path.cwd() / "db" # Base DB directory
+            self.memory_dir = self.db_dir / "memory" # Specific memory directory
             
-            # Initialize component processors
             self.query_processor = QueryProcessor(generator=self.generator)
             self.rerank_processor = RerankProcessor(generator=self.generator)
             
-            # Ensure memory directory exists
             if not self.memory_dir.exists():
                 self.memory_dir.mkdir(parents=True, exist_ok=True)
-                logger.debug(f"Created memory directory at {self.memory_dir}")
-            
-            # Load memory database if provided
-            if memory_db:
-                self._load_memory_db(memory_db)
+                logger.info(f"Created memory directory at {self.memory_dir}")
+
+            self._load_memory_db(memory_db_path) # Call internal load method
             
             logger.debug(f"MemoryRetriever initialized in {time.time() - start_time:.2f} seconds")
         except Exception as e:
@@ -2940,56 +2928,37 @@ class MemoryRetriever:
             logger.debug(f"Initialization error details: {traceback.format_exc()}")
             raise
     
-    def _load_memory_db(self, memory_db):
-        """Load memory database from different sources.
+    def _load_memory_db(self, memory_db_input: Optional[Union[str, Path, pd.DataFrame]]):
+        """Load memory database from path or use pre-loaded DataFrame.
         
         Args:
-            memory_db: Memory database instance or path to memory file
+            memory_db_input: Path to memory Parquet file or a pre-loaded DataFrame.
         """
-        try:
-            # Handle different memory DB types
-            if isinstance(memory_db, str):
-                # File path to memory database
-                memory_path = None
-                
-                # Handle both relative and absolute paths
-                if os.path.isabs(memory_db):
-                    memory_path = Path(memory_db)
-                else:
-                    # Try as a relative path to memory_dir
-                    memory_path = self.memory_dir / memory_db
-                
-                # If path doesn't exist but doesn't have .json extension, try adding it
-                if not os.path.exists(memory_path) and not str(memory_path).endswith('.json'):
-                    memory_path = Path(str(memory_path) + '.json')
-                
-                # If file exists, load it
-                if os.path.exists(memory_path):
-                    with open(memory_path, 'r') as f:
-                        self.memory_db = json.load(f)
-                    logger.debug(f"Loaded memory database from {memory_path}")
-                    self.memory_path = memory_path
-                else:
-                    logger.warning(f"Memory database file not found: {memory_path}")
-                    # Initialize empty memory database with schema structure
-                    self.memory_db = {
-                        "episodic_memory": [],
-                        "personality_memory": []
-                    }
+        default_columns = {
+            "episodic": ['memory_id', 'query', 'entity', 'context', 'transformed_query', 'prompt_id'],
+            "personality": ['mode_id', 'mode_name', 'personality_type', 'cognitive_style', 'mbti_type', 'mode_description', 'activation_contexts', 'activation_triggers']
+        }
+        
+        if isinstance(memory_db_input, (str, Path)):
+            self.memory_db_path = Path(memory_db_input)
+            if not self.memory_db_path.is_absolute():
+                 # Assume relative to standard memory directory if not absolute
+                 self.memory_db_path = self.memory_dir / self.memory_db_path
+
+            if self.memory_db_path.exists() and self.memory_db_path.suffix == '.parquet':
+                logger.info(f"Loading MemoryDB from Parquet file: {self.memory_db_path}")
+                self.memory_df = pd.read_parquet(self.memory_db_path)
+                logger.info(f"MemoryDB loaded with {len(self.memory_df)} entries.")
             else:
-                # Direct memory database object
-                self.memory_db = memory_db
-                logger.debug("Using provided memory database object directly")
-                
-        except Exception as e:
-            logger.error(f"Failed to load memory database: {e}")
-            logger.debug(f"Memory database load error details: {traceback.format_exc()}")
-            # Initialize empty memory database
-            self.memory_db = {
-                "episodic_memory": [],
-                "personality_memory": []
-            }
-    
+                logger.error(f"MemoryDB Parquet file not found or invalid: {self.memory_db_path}")
+                self.memory_df = pd.DataFrame(columns=default_columns.get(self.memory_type, []))
+        elif isinstance(memory_db_input, pd.DataFrame):
+            logger.info("Loading MemoryDB from pre-loaded DataFrame.")
+            self.memory_df = memory_db_input
+        else:
+            logger.warning(f"No MemoryDB path or DataFrame provided for {self.memory_type} memory. Retriever will operate on an empty dataset.")
+            self.memory_df = pd.DataFrame(columns=default_columns.get(self.memory_type, []))
+
     def retrieve(self, query, config=None):
         """Main retrieval method with configurable topology.
         
@@ -3058,10 +3027,10 @@ class MemoryRetriever:
         try:
             start_time = time.time()
             
-            # Check if memory_db is loaded
-            if not self.memory_db:
-                logger.warning("No memory database loaded, loading empty database")
-                self._load_memory_db(None)
+            # Check if memory_df is loaded and not empty
+            if self.memory_df is None or self.memory_df.empty:
+                logger.warning(f"Memory DataFrame for '{self.memory_type}' is None or empty. Cannot retrieve.")
+                return []
             
             # Process query if enabled
             processed_query = query
@@ -3069,48 +3038,43 @@ class MemoryRetriever:
             
             # Apply query processing in sequence if enabled
             if config["query_processing"]["rephrase"]:
-                # First apply rephrasing
                 processed_query = self.query_processor.rephrase_query(
-                    query=query,
+                    query=processed_query, # Use current state of processed_query
                     model=model,
-                    temperature=0.5  # Using default temperature
+                    temperature=0.5
                 )
                 logger.debug(f"Rephrased query: {processed_query}")
             
             if config["query_processing"]["hypothesize"]:
-                # Then apply hypothetical document embedding to current query (original or rephrased)
                 processed_query = self.query_processor.hypothesize_query(
-                    query=processed_query,  # Use the current processed query (might be rephrased)
+                    query=processed_query, # Use current state of processed_query
                     model=model,
-                    temperature=0.5  # Using default temperature
+                    temperature=0.5
                 )
                 logger.debug(f"Hypothesized query: {processed_query}")
                 
-            if processed_query != query:
-                logger.debug(f"Final processed query: {processed_query}")
+            if processed_query != query: # Log if query was actually changed
+                logger.debug(f"Final processed query for retrieval: {processed_query}")
             
             # Execute search based on configuration
             symbolic_results = []
             semantic_results = []
             
-            # Get the active collection based on memory type
-            collection_name = f"{self.memory_type}_memory"
-            active_collection = self.memory_db.get(collection_name, [])
-            
-            if not active_collection:
-                logger.warning(f"No {self.memory_type} memories found in database")
+            # active_collection is now self.memory_df
+            if self.memory_df.empty:
+                logger.warning(f"No {self.memory_type} memories found in DataFrame.")
                 return []
             
             # Symbolic search
             if config["search"]["symbolic"]:
-                symbolic_results = self._symbolic_search(processed_query, active_collection)
+                symbolic_results = self._symbolic_search(processed_query, self.memory_df)
                 logger.debug(f"Symbolic search returned {len(symbolic_results)} results")
             
             # Semantic search
             if config["search"]["semantic"]:
                 semantic_results = self._semantic_search(
                     processed_query,
-                    active_collection,
+                    self.memory_df, # Pass the DataFrame
                     embedding_model=config["search"]["embedding_model"]
                 )
                 logger.debug(f"Semantic search returned {len(semantic_results)} results")
@@ -3170,29 +3134,38 @@ class MemoryRetriever:
         
         if self.memory_type == "episodic":
             # Search episodic memory by entity and context
-            for memory in collection:
+            for index, memory_row in collection.iterrows():
                 score = 0.0
                 
                 # Entity matching - direct match gets a higher score
-                if "entity" in memory and memory["entity"]:
-                    if memory["entity"].lower() in query.lower():
+                if "entity" in memory_row and pd.notna(memory_row["entity"]):
+                    if memory_row["entity"].lower() in query.lower():
                         score += 0.5  # Higher score for entity match
-                    elif query.lower() in memory["entity"].lower():
+                    elif query.lower() in memory_row["entity"].lower():
                         score += 0.4  # Lower score for partial match
                 
                 # Context matching - simplified JSON check
-                if "context" in memory and memory["context"]:
-                    context_text = json.dumps(memory["context"]).lower()
-                    query_terms = query.lower().split()
-                    matched_terms = sum(1 for term in query_terms if term in context_text)
-                    if matched_terms > 0:
-                        score += 0.3 * (matched_terms / len(query_terms))
+                if "context" in memory_row and pd.notna(memory_row["context"]):
+                    # Assuming context could be a dict stored as a string, or already a dict
+                    context_data = memory_row["context"]
+                    if isinstance(context_data, str):
+                        try:
+                            context_data = json.loads(context_data) # Parse if string
+                        except json.JSONDecodeError:
+                            context_data = {} # Or handle error appropriately
+                    
+                    if isinstance(context_data, dict):
+                        context_text = json.dumps(context_data).lower()
+                        query_terms = query.lower().split()
+                        matched_terms = sum(1 for term in query_terms if term in context_text)
+                        if matched_terms > 0:
+                            score += 0.3 * (matched_terms / len(query_terms))
                 
                 # Original query matching
-                if "query" in memory and memory["query"]:
+                if "query" in memory_row and pd.notna(memory_row["query"]):
                     # Simple text matching (word overlap)
                     query_words = set(query.lower().split())
-                    memory_words = set(memory["query"].lower().split())
+                    memory_words = set(memory_row["query"].lower().split())
                     overlap = len(query_words.intersection(memory_words))
                     if overlap > 0:
                         score += 0.4 * (overlap / max(len(query_words), len(memory_words)))
@@ -3200,10 +3173,10 @@ class MemoryRetriever:
                 # Only include results with a positive score
                 if score > 0.0:
                     results.append({
-                        "memory_id": memory.get("memory_id", ""),
-                        "query": memory.get("query", ""),
-                        "entity": memory.get("entity", ""),
-                        "context": memory.get("context", {}),
+                        "memory_id": memory_row.get("memory_id", ""),
+                        "query": memory_row.get("query", ""),
+                        "entity": memory_row.get("entity", ""),
+                        "context": memory_row.get("context", {}), # Ensure it's a dict if possible
                         "score": score,
                         "memory_type": "episodic",
                         "search_method": "symbolic"
@@ -3211,41 +3184,48 @@ class MemoryRetriever:
                     
         elif self.memory_type == "personality":
             # Search personality memory by personality_type and mbti_type
-            for memory in collection:
+            for index, memory_row in collection.iterrows():
                 score = 0.0
                 
                 # Personality type matching
-                if "personality_type" in memory and memory["personality_type"]:
-                    if memory["personality_type"].lower() in query.lower():
-                        score += 0.5  # Higher score for personality type match
-                    elif query.lower() in memory["personality_type"].lower():
-                        score += 0.4  # Lower score for partial match
+                if "personality_type" in memory_row and pd.notna(memory_row["personality_type"]):
+                    if memory_row["personality_type"].lower() in query.lower():
+                        score += 0.5
+                    elif query.lower() in memory_row["personality_type"].lower():
+                        score += 0.4
                 
-                # MBTI type matching - exact matches are valued highly
-                if "mbti_type" in memory and memory["mbti_type"]:
-                    if memory["mbti_type"].lower() in query.lower():
-                        score += 0.5  # MBTI type is a strong signal
+                if "mbti_type" in memory_row and pd.notna(memory_row["mbti_type"]):
+                    if memory_row["mbti_type"].lower() in query.lower():
+                        score += 0.5
                 
-                # Cognitive style matching
-                if "cognitive_style" in memory and memory["cognitive_style"]:
-                    if memory["cognitive_style"].lower() in query.lower():
-                        score += 0.4  # Cognitive style is also relevant
+                if "cognitive_style" in memory_row and pd.notna(memory_row["cognitive_style"]):
+                    if memory_row["cognitive_style"].lower() in query.lower():
+                        score += 0.4
                 
-                # Activation contexts
-                if "activation_contexts" in memory and memory["activation_contexts"]:
-                    for context in memory["activation_contexts"]:
-                        if context.lower() in query.lower():
-                            score += 0.5  # Direct activation context match
+                # Activation contexts (assuming it's a list of strings or string representation of list)
+                if "activation_contexts" in memory_row and pd.notna(memory_row["activation_contexts"]):
+                    activation_contexts = memory_row["activation_contexts"]
+                    # Handle if activation_contexts is stored as a string representation of a list
+                    if isinstance(activation_contexts, str):
+                        try:
+                            activation_contexts = json.loads(activation_contexts.replace("'", "\"")) # Basic string to list
+                        except json.JSONDecodeError:
+                            activation_contexts = [activation_contexts] # Treat as single item list if parse fails
+                    
+                    if isinstance(activation_contexts, list):
+                        for context_item in activation_contexts:
+                            if isinstance(context_item, str) and context_item.lower() in query.lower():
+                                score += 0.5
+                                break # Match found in contexts
                 
-                # Only include results with a positive score
                 if score > 0.0:
                     results.append({
-                        "mode_id": memory.get("mode_id", ""),
-                        "mode_name": memory.get("mode_name", ""),
-                        "personality_type": memory.get("personality_type", ""),
-                        "cognitive_style": memory.get("cognitive_style", ""),
-                        "mbti_type": memory.get("mbti_type", ""),
-                        "mode_description": memory.get("mode_description", ""),
+                        "mode_id": memory_row.get("mode_id", ""),
+                        "mode_name": memory_row.get("mode_name", ""),
+                        "personality_type": memory_row.get("personality_type", ""),
+                        "cognitive_style": memory_row.get("cognitive_style", ""),
+                        "mbti_type": memory_row.get("mbti_type", ""),
+                        "mode_description": memory_row.get("mode_description", ""),
                         "score": score,
                         "memory_type": "personality",
                         "search_method": "symbolic"
@@ -3271,83 +3251,55 @@ class MemoryRetriever:
         
         if self.memory_type == "episodic":
             # For episodic memories, compare against query and entity
-            for memory in collection:
-                # Combine relevant fields for embedding comparison
+            for index, memory_row in collection.iterrows():
                 comparison_text = ""
+                if pd.notna(memory_row.get("query")): comparison_text += str(memory_row["query"]) + " "
+                if pd.notna(memory_row.get("entity")): comparison_text += str(memory_row["entity"]) + " "
+                if pd.notna(memory_row.get("transformed_query")): comparison_text += str(memory_row["transformed_query"]) + " "
                 
-                if "query" in memory and memory["query"]:
-                    comparison_text += memory["query"] + " "
+                if not comparison_text.strip(): continue
                 
-                if "entity" in memory and memory["entity"]:
-                    comparison_text += memory["entity"] + " "
-                
-                if "transformed_query" in memory and memory["transformed_query"]:
-                    comparison_text += memory["transformed_query"] + " "
-                
-                # Skip if no text to compare
-                if not comparison_text.strip():
-                    continue
-                
-                # Get embedding and calculate similarity
                 memory_embedding = self.generator.get_embedding(comparison_text.strip(), model=embedding_model)
-                score = 1.0 - cosine(query_embedding, memory_embedding)
-                
-                # Only include results with a good score
-                if score > 0.2:  # Threshold to filter low-relevance results
-                    results.append({
-                        "memory_id": memory.get("memory_id", ""),
-                        "query": memory.get("query", ""),
-                        "entity": memory.get("entity", ""),
-                        "context": memory.get("context", {}),
-                        "score": score,
-                        "memory_type": "episodic",
-                        "search_method": "semantic"
-                    })
+                if query_embedding is not None and memory_embedding is not None:
+                    score = 1.0 - cosine(query_embedding, memory_embedding)
+                    if score > 0.2:
+                        results.append({
+                            "memory_id": memory_row.get("memory_id", ""),
+                            "query": memory_row.get("query", ""),
+                            "entity": memory_row.get("entity", ""),
+                            "context": memory_row.get("context", {}),
+                            "score": score,
+                            "memory_type": "episodic",
+                            "search_method": "semantic"
+                        })
                     
         elif self.memory_type == "personality":
-            # For personality memories, compare against personality fields
-            for memory in collection:
-                # Combine relevant fields for personality embedding
+            for index, memory_row in collection.iterrows():
                 comparison_text = ""
+                if pd.notna(memory_row.get("mode_name")): comparison_text += str(memory_row["mode_name"]) + " "
+                if pd.notna(memory_row.get("personality_type")): comparison_text += str(memory_row["personality_type"]) + " "
+                if pd.notna(memory_row.get("cognitive_style")): comparison_text += str(memory_row["cognitive_style"]) + " "
+                if pd.notna(memory_row.get("mbti_type")): comparison_text += str(memory_row["mbti_type"]) + " "
+                if pd.notna(memory_row.get("mode_description")): comparison_text += str(memory_row["mode_description"]) + " "
                 
-                if "mode_name" in memory and memory["mode_name"]:
-                    comparison_text += memory["mode_name"] + " "
-                
-                if "personality_type" in memory and memory["personality_type"]:
-                    comparison_text += memory["personality_type"] + " "
-                
-                if "cognitive_style" in memory and memory["cognitive_style"]:
-                    comparison_text += memory["cognitive_style"] + " "
-                
-                if "mbti_type" in memory and memory["mbti_type"]:
-                    comparison_text += memory["mbti_type"] + " "
-                
-                if "mode_description" in memory and memory["mode_description"]:
-                    comparison_text += memory["mode_description"] + " "
-                
-                # Skip if no text to compare
-                if not comparison_text.strip():
-                    continue
-                
-                # Get embedding and calculate similarity
+                if not comparison_text.strip(): continue
+
                 memory_embedding = self.generator.get_embedding(comparison_text.strip(), model=embedding_model)
-                score = 1.0 - cosine(query_embedding, memory_embedding)
-                
-                # Only include results with a good score
-                if score > 0.2:  # Threshold to filter low-relevance results
-                    results.append({
-                        "mode_id": memory.get("mode_id", ""),
-                        "mode_name": memory.get("mode_name", ""),
-                        "personality_type": memory.get("personality_type", ""),
-                        "cognitive_style": memory.get("cognitive_style", ""),
-                        "mbti_type": memory.get("mbti_type", ""),
-                        "mode_description": memory.get("mode_description", ""),
-                        "score": score,
-                        "memory_type": "personality",
-                        "search_method": "semantic"
-                    })
+                if query_embedding is not None and memory_embedding is not None:
+                    score = 1.0 - cosine(query_embedding, memory_embedding)
+                    if score > 0.2: 
+                        results.append({
+                            "mode_id": memory_row.get("mode_id", ""),
+                            "mode_name": memory_row.get("mode_name", ""),
+                            "personality_type": memory_row.get("personality_type", ""),
+                            "cognitive_style": memory_row.get("cognitive_style", ""),
+                            "mbti_type": memory_row.get("mbti_type", ""),
+                            "mode_description": memory_row.get("mode_description", ""),
+                            "score": score,
+                            "memory_type": "personality",
+                            "search_method": "semantic"
+                        })
         
-        # Sort results by score in descending order
         results.sort(key=lambda x: x["score"], reverse=True)
         return results
     
@@ -3487,11 +3439,14 @@ class MemoryRetriever:
             id_field = "memory_id" if self.memory_type == "episodic" else "mode_id"
             logger.debug(f"Added {self.memory_type} memory with ID: {new_memory[id_field]}")
             
-            # Save to file if memory_db was loaded from a file
-            if hasattr(self, "memory_path") and self.memory_path:
-                with open(self.memory_path, 'w') as f:
-                    json.dump(self.memory_db, f, indent=2)
-                logger.debug(f"Saved memory database to {self.memory_path}")
+            # Save to file if memory_df was loaded from a file path
+            if self.memory_db_path and isinstance(self.memory_df, pd.DataFrame):
+                # The collection (e.g., episodic_memory) is now the entire DataFrame
+                # So, we save self.memory_df directly to self.memory_db_path
+                self.memory_df.to_parquet(self.memory_db_path)
+                logger.debug(f"Saved memory database to {self.memory_db_path}")
+            elif isinstance(self.memory_df, pd.DataFrame): # Loaded from DataFrame, no path to save to by default
+                 logger.debug("Memory updated in DataFrame, but no file path associated for saving.")
             
             return True
             

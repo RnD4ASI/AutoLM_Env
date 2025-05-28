@@ -590,6 +590,8 @@ class TextChunker:
                 if chunk_id == 0:
                     document_uuid = self.datautility.generate_uuid()
                 
+                # Ensure heading and content_type are added for schema compliance, even if basic for length-based
+                # Ensure heading and content_type are added for schema compliance, even if basic for length-based
                 chunk = {
                     'source': markdown_file,
                     'document_id': document_uuid,
@@ -598,7 +600,9 @@ class TextChunker:
                     'reference': f"{filename} Para {chunk_id + 1}.",
                     'hierarchy': filename,  # Just use filename, no heading hierarchy
                     'corpus': chunk_text,
-                    'embedding_model': None
+                    'embedding_model': None,
+                    'heading': None,  # Optional field, None for length-based
+                    'content_type': 'paragraph'  # Default for length-based
                 }
                 chunks.append(chunk)
                 chunk_id += 1
@@ -719,30 +723,30 @@ class TextChunker:
                                 extracted_sections = extracted_sections)
             
             # Convert to DataFrame with proper column names
-            if extracted_sections:                
-                # Create base DataFrame
-                df_sections = pd.DataFrame(extracted_sections, columns=['hierarchy', 'reference', 'heading', 'corpus'])
-                
-                # Add content_type column (default to 'paragraph')
-                df_sections['content_type'] = 'paragraph'
+            if extracted_sections:
+                # Columns: 'hierarchy', 'reference', 'heading', 'corpus', 'content_type'
+                df_sections = pd.DataFrame(extracted_sections, columns=['hierarchy', 'reference', 'heading', 'corpus', 'content_type'])
                 
                 # Generate a single document_id for all chunks from this file
-                document_uuid = self.datautility.generate_uuid()
+                document_uuid = self.datautility.generate_uuid() # Generate once for the document
                 
                 # Add required fields from schema
                 df_sections['source'] = markdown_file
-                df_sections['document_id'] = document_uuid
+                df_sections['document_id'] = document_uuid # Apply same document_id to all
                 df_sections['chunk_id'] = df_sections.apply(lambda _: self.datautility.generate_uuid(), axis=1)
                 df_sections['document_name'] = filename
-                df_sections['embedding_model'] = None
+                df_sections['embedding_model'] = None # Placeholder, filled by VectorBuilder
+                # 'heading' and 'content_type' are already columns from extracted_sections
+                # 'level' is optional and not explicitly added here, can be derived if needed.
                 
                 logger.info(f"Extracted {len(df_sections)} sections from {markdown_file}")
                 return df_sections
             else:
-                # Return empty DataFrame with required columns
+                # Return empty DataFrame with required columns for schema consistency
                 logger.warning(f"No sections extracted from {markdown_file}")
-                return pd.DataFrame(columns=['hierarchy', 'heading', 'reference', 'corpus', 'content_type', 
-                                           'source', 'document_id', 'chunk_id', 'document_name', 'embedding_model'])
+                return pd.DataFrame(columns=['source', 'document_id', 'chunk_id', 'document_name', 
+                                           'reference', 'hierarchy', 'corpus', 'embedding_model', 
+                                           'heading', 'content_type'])
             
         except FileNotFoundError:
             logger.error(f"Markdown file not found: {markdown_file}")
@@ -755,88 +759,109 @@ class TextChunker:
         self, 
         filename: str, 
         hierarchy: List[str], 
-        current_heading: str, 
+        current_heading: str,
         current_content: List[str],
-        extracted_sections: List[Dict[str, str]]):
+        extracted_sections: List[Tuple[str, str, str, str, str]], # Tuple: hierarchy_path, reference, heading, corpus, content_type
+        content_type: str = 'paragraph'): # Default content_type passed from caller
         """ Append a section to the extracted sections.
         
         Args:
             filename: Document identifier
-            hierarchy: Current heading hierarchy
-            current_heading: Heading level of the current section
-            current_content: Regular paragraph content
-            extracted_sections: List to append the new section to
-            aiutility: Utility object for AI-based content extraction
+            hierarchy: Current heading hierarchy (list of strings)
+            current_heading: Heading text of the current section
+            current_content: List of text lines for the current section's content
+            extracted_sections: List to append the new section tuple to
+            content_type: The initial type of content being appended (e.g., 'paragraph', 'table')
         """
-        if len(hierarchy) == 1:
-            hierarchy_heading = hierarchy[0]
-        else:
-            hierarchy_heading = ' > '.join(hierarchy)
+        # Construct full hierarchy path string
+        hierarchy_path_str = filename + " > " + ' > '.join(hierarchy) if hierarchy else filename
         
-        if len(current_content) == 1:
-            text_contents = current_content[0]
-        else:
-            text_contents = '\n'.join(current_content)
-        
-        attachment_prefix = re.search(r'Attachment ([A-Z])', hierarchy_heading) or \
-                            re.search(r'Chapter \d+', hierarchy_heading) or \
-                            re.search(r'CHAPTER \d+', hierarchy_heading)
-        prefix_para = ", ".join([filename, attachment_prefix.group(0)]) if attachment_prefix else filename
+        text_contents = '\n'.join(current_content).strip()
+        if not text_contents: # Do not append if there is no actual content
+            return
 
-        # Specific to Basel Framework
-        if "CRE" in filename and text_contents is not None:
-            # Split by numbering system N.N
-            paragraphs = re.split(r'\n(?=\d+\.\d+)', text_contents)
-            for paragraph in paragraphs:
-                match = re.search(r'(\d+\.\d+)', paragraph)
-                if match:
-                    para_num = match.group(2)
-                    ref_num = ", CRE" + match.group(0)
-                    extracted_sections.append((filename + " > " + hierarchy_heading,
-                                                prefix_para + " Para " + para_num + ref_num, 
-                                                current_heading,
-                                                paragraph.strip()))
-                else:
-                    extracted_sections.append((filename + " > " + hierarchy_heading,
-                                                prefix_para+ " Orphan", 
-                                                current_heading,
-                                                paragraph.strip()))
-                logger.debug(f"Paragraph found: {filename} - {current_heading.strip()}")
+        # Determine prefix for reference based on hierarchy (e.g., Attachment, Chapter)
+        attachment_match = None
+        if hierarchy: # Check if hierarchy list is not empty
+            last_heading_part = hierarchy[-1] 
+            attachment_match = re.search(r'Attachment ([A-Z])', last_heading_part, re.IGNORECASE) or \
+                               re.search(r'Chapter (\d+)', last_heading_part, re.IGNORECASE)
+        prefix_para = ", ".join([filename, attachment_match.group(0)]) if attachment_match else filename
+
+        # Specific to Basel Framework (CRE documents)
+        if "CRE" in filename:
+            # Split by numbering system like NNN.N or N.N, possibly prefixed by CRE.
+            paragraphs = re.split(r'\n(?=(?:[A-Z]+\.)?\d+\.\d+)', text_contents) 
+            for para_idx, paragraph_text in enumerate(paragraphs):
+                paragraph_text_stripped = paragraph_text.strip()
+                if not paragraph_text_stripped: continue
+
+                match = re.match(r'(?:([A-Z]+)\.)?(\d+\.\d+)', paragraph_text_stripped) 
+                para_num_text = match.group(2) if match else f"auto{para_idx+1}"
+                # Use the captured prefix (e.g., "CRE") if present, otherwise default to no specific prefix in ref.
+                ref_prefix_text = f", {match.group(1)}" if match and match.group(1) else ""
+                
+                final_reference = f"{prefix_para} Para {para_num_text}{ref_prefix_text}"
+                extracted_sections.append((hierarchy_path_str,
+                                           final_reference,
+                                           current_heading, 
+                                           paragraph_text_stripped,
+                                           'paragraph')) # Assuming CRE paragraphs are 'paragraph' type
+                logger.debug(f"Paragraph found: {filename} - {current_heading} - Ref: {final_reference}")
 
         # Specific to APS, APG and Risk Opinions
         else:
-            # APS/APG - Split by numbering system N. or Table M
-            if re.search(r'^(\d+\.)|(Table \d+)', text_contents):
-                paragraphs = re.split(r'\n(?=\d+\.|Table \d+)', text_contents)
-            # Split for long paragraphs (based on character count instead of token count)
-            elif len(text_contents) > 8000:
-                paragraphs = re.split(r'\n', text_contents)
-            else:
+            # Determine initial block content type based on passed 'content_type' and content sniffing
+            block_content_type = content_type
+            if block_content_type == 'paragraph' and re.match(r'^Table \d+', text_contents, re.IGNORECASE):
+                 block_content_type = 'table' # Upgrade to table if pattern matches
+            
+            # If it's a table, treat as a single unit. Otherwise, split by paragraph markers.
+            if block_content_type == 'table':
                 paragraphs = [text_contents]
+            elif re.search(r'^\d+\.', text_contents, re.MULTILINE): 
+                 paragraphs = re.split(r'\n(?=\d+\.)', text_contents) 
+            elif len(text_contents) > 8000: 
+                 paragraphs = re.split(r'\n', text_contents)
+            else:
+                 paragraphs = [text_contents]
 
-            for paragraph in paragraphs:
-                match1 = re.match(r'^(\d+\.)', paragraph)
-                match2 = re.match(r'^Table (\d+)', paragraph)
-                if match1:
-                    logger.debug(f"Paragraph found: {filename} - {current_heading.strip()}")
-                    para_num = match1.group(1)
-                    extracted_sections.append((filename + " > " + hierarchy_heading,
-                                                prefix_para + " Para " + para_num, 
-                                                current_heading,
-                                                paragraph.strip()))
-                elif match2:
-                    logger.debug(f"Table found: {filename} - {current_heading.strip()}")
-                    table_num = match2.group(1)
-                    extracted_sections.append((filename + " > " + hierarchy_heading,
-                                                prefix_para + " Table " + table_num, 
-                                                current_heading,
-                                                paragraph.strip()))
-                else:
-                    logger.debug(f"Orphan paragraph: {filename} - {current_heading.strip()}")
-                    extracted_sections.append((filename + " > " + hierarchy_heading,
-                                                prefix_para+ " Orphan", 
-                                                current_heading,
-                                                paragraph.strip()))
+            for para_idx, paragraph_text in enumerate(paragraphs):
+                paragraph_text_stripped = paragraph_text.strip()
+                if not paragraph_text_stripped: 
+                    continue
+
+                # Default content type for this specific segment
+                current_segment_content_type = 'paragraph' 
+                final_reference = f"{prefix_para} Orphan {para_idx+1}" 
+
+                match_table = re.match(r'^Table (\d+)', paragraph_text_stripped, re.IGNORECASE)
+                match_para = re.match(r'^(\d+\.)', paragraph_text_stripped)
+
+                if match_table: 
+                    table_num_text = match_table.group(1)
+                    final_reference = f"{prefix_para} Table {table_num_text}"
+                    current_segment_content_type = 'table'
+                    logger.debug(f"Table found: {filename} - {current_heading} - Ref: {final_reference}")
+                elif match_para: 
+                    para_num_text = match_para.group(1)
+                    final_reference = f"{prefix_para} Para {para_num_text}"
+                    current_segment_content_type = 'paragraph' # Explicitly paragraph
+                    logger.debug(f"Paragraph found: {filename} - {current_heading} - Ref: {final_reference}")
+                else: # Orphan or unnumbered content
+                    # If the broader block was identified as a table, this segment is part of it.
+                    if block_content_type == 'table': 
+                        current_segment_content_type = 'table' 
+                        final_reference = f"{prefix_para} Table Content {para_idx+1}" 
+                    else: # Otherwise, it's a paragraph.
+                        current_segment_content_type = 'paragraph'
+                    logger.debug(f"Orphan/unnumbered content: {filename} - {current_heading} - Default Ref: {final_reference}")
+                
+                extracted_sections.append((hierarchy_path_str,
+                                           final_reference,
+                                           current_heading,
+                                           paragraph_text_stripped,
+                                           current_segment_content_type))
 
 
 class VectorBuilder:
@@ -915,51 +940,76 @@ class VectorBuilder:
                       input_file: str,
                       df_headings: Optional[pd.DataFrame] = None,
                       chunking_method: str = 'hierarchy',
-                      **kwargs) -> pd.DataFrame:
-        """Apply text chunking to input file.
+            **kwargs) -> Tuple[pd.DataFrame, Dict[str, Any]]:
+        """Apply text chunking to input file and collect document metadata.
         
         Args:
             input_file: Path to the input file (PDF or markdown)
-            df_headings: DataFrame containing heading metadata
+            df_headings: DataFrame containing heading metadata (for hierarchy chunking)
             chunking_method: Method to use for chunking ('hierarchy' or 'length')
-            **kwargs: Additional arguments for chunking method
+            **kwargs: Additional arguments for chunking method (e.g., conversion_method for process_input_file)
             
         Returns:
-            pd.DataFrame: DataFrame with chunked text
+            Tuple[pd.DataFrame, Dict[str, Any]]: 
+                - DataFrame with chunked text
+                - Dictionary with document-level metadata
         """
         # Process input file (convert PDF to markdown if needed)
-        markdown_file = self.process_input_file(input_file, **kwargs)
+        # kwargs here might include 'conversion_method'
+        markdown_file = self.process_input_file(input_file, conversion_method=kwargs.get('conversion_method', 'pymupdf'))
         
         # Validate chunking method
         if chunking_method not in ['hierarchy', 'length']:
             raise ValueError(f"Invalid chunking method: {chunking_method}")
         
+        chunks_df = pd.DataFrame()
         # Set defaults and validate parameters based on chunking method
         if chunking_method == 'length':
-            chunk_size = kwargs.get('chunk_size', self.default_chunk_size)
-            chunk_overlap = kwargs.get('chunk_overlap', self.default_chunk_overlap)
-        else:  # hierarchy based chunking
-            if any(k in kwargs for k in ['chunk_size', 'chunk_overlap']):
-                logger.warning("chunk_size and chunk_overlap are ignored for hierarchy-based chunking")
+            chunk_size = kwargs.get('chunk_size', self.chunker.default_chunk_size) # Use chunker's default
+            chunk_overlap = kwargs.get('chunk_overlap', self.chunker.default_chunk_overlap) # Use chunker's default
+            chunks_df = self.chunker.length_based_chunking(
+                markdown_file,
+                chunk_size=chunk_size,
+                overlap=chunk_overlap
+            )
+        elif chunking_method == 'hierarchy':
+            if df_headings is None or df_headings.empty: # Ensure df_headings is provided for hierarchy
+                 raise ValueError(f"Hierarchy data (df_headings) not provided for hierarchy-based chunking of {input_file}")
+            # chunk_size and chunk_overlap are not used for hierarchy, but pass other kwargs if any
+            chunks_df = self.chunker.hierarchy_based_chunking(
+                markdown_file,
+                df_headings
+            )
         
-        # Get list of markdown files and hierarchy data
-        if not markdown_file:
-            raise ValueError(f"Markdown file not provided for vector database building")
-        if df_headings is not None and not df_headings.empty:
-            # Choose chunking method
-            if chunking_method == 'hierarchy':
-                chunks_df = self.chunker.hierarchy_based_chunking(
-                    markdown_file,
-                    df_headings)
-            else:
-                chunks_df = self.chunker.length_based_chunking(
-                    markdown_file,
-                    chunk_size=chunk_size,
-                    overlap=chunk_overlap
-                )      
-            return chunks_df
-        else:
-            raise ValueError(f"Hierarchy data not provided for vector database building")
+        # Collect document-level metadata
+        doc_meta = {
+            'document_id': None, 
+            'document_author': "Unknown", 
+            'document_format': Path(input_file).suffix.replace('.', ''), 
+            'n_sections': 0, # Placeholder, could be enhanced by analyzing unique hierarchy paths in chunks_df
+            'n_chunks': len(chunks_df)
+        }
+
+        if not chunks_df.empty and 'document_id' in chunks_df.columns:
+            # All chunks from the same document should have the same document_id
+            doc_meta['document_id'] = chunks_df['document_id'].iloc[0] 
+            # Estimate n_sections by counting unique top-level hierarchy entries if available
+            if 'hierarchy' in chunks_df.columns:
+                 try: # Handle potential errors if hierarchy is not as expected (e.g. None)
+                    doc_meta['n_sections'] = chunks_df['hierarchy'].astype(str).apply(lambda x: x.split(' > ')[0]).nunique()
+                 except Exception:
+                    logger.debug("Could not derive n_sections from hierarchy for metadata.")
+
+        elif not chunks_df.empty: 
+            logger.warning(f"document_id column missing in chunks_df for {input_file}. Generating a new one for metadata.")
+            # This case should ideally not occur if chunkers correctly add document_id
+            doc_meta['document_id'] = self.chunker.datautility.generate_uuid() # Generate a new one for the metadata
+        else: 
+            logger.warning(f"No chunks produced for {input_file}. Generating a document_id for metadata record.")
+            doc_meta['document_id'] = self.chunker.datautility.generate_uuid()
+
+
+        return chunks_df, doc_meta
 
     def create_embeddings(self, 
                           chunks_df: pd.DataFrame,
@@ -1033,46 +1083,54 @@ class VectorBuilder:
                   df_headings: pd.DataFrame,
                   chunking_method: str = 'hierarchy',
                   model: Optional[str] = None,
-                  **kwargs) -> str:
-        """Create a vector database from input files.
+                  **kwargs) -> Tuple[Optional[str], Dict[str, Any]]:
+        """Create a vector database from input files and return its path and metadata.
         
         Args:
             input_file: Path to the input file (PDF or markdown)
             df_headings: DataFrame containing heading metadata
             chunking_method: Method to use for chunking ('hierarchy' or 'length')
             model: Model to use for embedding generation
-            **kwargs: Additional arguments based on chunking method
+            **kwargs: Additional arguments (e.g., conversion_method for PDF, chunk_size, chunk_overlap for length chunking)
             
         Returns:
-            str: Path to the saved vector database file
+            Tuple[Optional[str], Dict[str, Any]]: 
+                - Path to the saved vector database file (None if no chunks)
+                - Dictionary with document-level metadata
         """
         try:
-            # Step 1: Apply chunking
-            chunks_df = self.apply_chunking(
+            # Step 1: Apply chunking and get document metadata
+            # Pass relevant kwargs to apply_chunking, which then passes to process_input_file or chunkers
+            chunks_df, doc_meta = self.apply_chunking(
                 input_file=input_file,
-                df_headings=df_headings,
+                df_headings=df_headings, 
                 chunking_method=chunking_method,
-                **kwargs  # e.g. conversion_method
+                conversion_method=kwargs.get('conversion_method'), 
+                chunk_size=kwargs.get('chunk_size'), # For length_based_chunking
+                chunk_overlap=kwargs.get('chunk_overlap') # For length_based_chunking
             )
 
+            if chunks_df.empty:
+                logger.warning(f"No chunks generated for {input_file}. Vector DB will not be created.")
+                return None, doc_meta
+
             # Step 2: Create embeddings
-            chunks_df = self.create_embeddings(
+            chunks_df = self.create_embeddings(  # This modifies chunks_df or returns a new one
                 chunks_df=chunks_df,
                 model=model,
                 **kwargs
             )
             
             # Step 3: Save to parquet
-            output_file = self.save_db(
+            output_file_path = self.save_db( 
                 chunks_df=chunks_df,
-                input_file=input_file,
-                **kwargs
+                input_file=input_file 
             )
             
-            return output_file
+            return output_file_path, doc_meta
             
         except Exception as e:
-            logger.error(f"Error creating vector database: {str(e)}")
+            logger.error(f"Error creating vector database for {input_file}: {str(e)}")
             logger.debug(f"Vector database creation error details: {traceback.format_exc()}")
             raise
 

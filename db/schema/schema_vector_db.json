@@ -63,6 +63,14 @@
             "description": "Hierarchical level (1=top level)",
             "min": 1,
             "max": 10
+          },
+          "heading": {
+            "type": "string",
+            "description": "The heading associated with this chunk from document structure."
+          },
+          "content_type": {
+            "type": "string",
+            "description": "The type of content of the chunk based on document structure (e.g., paragraph, list_item, table)."
           }
         },
         "indexes": [

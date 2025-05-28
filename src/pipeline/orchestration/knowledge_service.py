@@ -81,6 +81,37 @@ class KnowledgeService:
             
             # Initialize MemoryBuilder
             self.memory_builder = MemoryBuilder()
+
+            # Sample personality traits for basic population
+            self.sample_personality_traits = [
+                {
+                    "mode_name": "Analytical Researcher",
+                    "personality_type": "conscientiousness",
+                    "cognitive_style": "analytical",
+                    "mbti_type": "INTJ",
+                    "mode_description": "Focuses on deep analysis, data-driven insights, and methodical research.",
+                    "activation_contexts": ["research_task", "data_analysis"],
+                    "activation_triggers": {"type": "keyword", "value": ["analyze", "research", "data"]}
+                },
+                {
+                    "mode_name": "Creative Brainstormer",
+                    "personality_type": "openness",
+                    "cognitive_style": "creative",
+                    "mbti_type": "ENFP",
+                    "mode_description": "Generates novel ideas, explores diverse perspectives, and facilitates brainstorming sessions.",
+                    "activation_contexts": ["ideation_task", "creative_problem_solving"],
+                    "activation_triggers": {"type": "keyword", "value": ["create", "brainstorm", "innovate"]}
+                },
+                {
+                    "mode_name": "Default Assistant",
+                    "personality_type": "agreeableness",
+                    "cognitive_style": "collaborative",
+                    "mbti_type": "ISFJ",
+                    "mode_description": "Provides general assistance, answers queries factually, and maintains a helpful demeanor.",
+                    "activation_contexts": ["general_query", "default_interaction"],
+                    "activation_triggers": None
+                }
+            ]
             
             # Track processing statistics
             self.stats = {
@@ -90,7 +121,8 @@ class KnowledgeService:
                 "vector_db_size": 0,
                 "graph_nodes": 0,
                 "graph_edges": 0,
-                "memory_entries_created": 0,
+                "episodic_memory_entries_created": 0,
+                "personality_memory_entries_created": 0,
                 "processing_time": 0
             }
             
@@ -225,7 +257,7 @@ class KnowledgeService:
                 logger.info(f"Created combined memory database with {total_entries_created} entries at {memory_db_path}")
                 
                 # Update statistics
-                self.stats["memory_entries_created"] = total_entries_created
+                self.stats["episodic_memory_entries_created"] = total_entries_created
                 
                 return str(memory_db_path)
             else:
@@ -374,14 +406,24 @@ class KnowledgeService:
                             num_entries=memory_entries_per_vector
                         )
                         memory_db_paths.append(memory_db_path_str)
-                        self.stats["memory_entries_created"] += memory_entries_per_vector
-                        logger.info(f"Created memory database for {file_path} at {memory_db_path_str}")
+                        # Assuming memory_entries_per_vector is the number of entries in this specific parquet file
+                        try:
+                            temp_df = pd.read_parquet(memory_db_path_str)
+                            self.stats["episodic_memory_entries_created"] += len(temp_df)
+                        except Exception:
+                            self.stats["episodic_memory_entries_created"] += memory_entries_per_vector # Fallback if read fails
+                        logger.info(f"Created episodic memory file for {file_path} at {memory_db_path_str}")
                     else:
                         # If it exists and we're not rebuilding, just add it to the list
                         memory_db_paths.append(str(memory_db_path))
-                        logger.info(f"Using existing memory database for {file_path} at {memory_db_path}")
+                        try:
+                            temp_df = pd.read_parquet(memory_db_path)
+                            # Potentially add to stats if needed, though usually, existing means already counted
+                        except Exception:
+                            pass # Already logged
+                        logger.info(f"Using existing episodic memory file for {file_path} at {memory_db_path}")
                 except Exception as e:
-                    logger.error(f"Failed to create memory database for {file_path}: {str(e)}")
+                    logger.error(f"Failed to create episodic memory file for {file_path}: {str(e)}")
                     logger.debug(traceback.format_exc())
                 
                 self.stats["files_processed"] += 1
@@ -414,44 +456,176 @@ class KnowledgeService:
         """
         logger.info(f"Merging {len(vector_db_paths)} vector databases and {len(graph_db_paths)} graph databases")
         
+        merged_vector_path_str: Optional[str] = None
+        merged_graph_path_str: Optional[str] = None
+
         if not vector_db_paths:
-            logger.warning("No vector databases to merge")
-            return None, None
-        
-        try:
-            # Merge vector databases
-            merged_vector_df = self.vector_builder.merge_db(
-                parquet_files=vector_db_paths,
-                output_name=f"v_{output_name}"
-            )
-            
-            merged_vector_path = str(self.vector_dir / f"v_{output_name}.parquet")
-            logger.info(f"Merged vector database saved to {merged_vector_path}")
-            
-            # Initialize graph builder with the merged vector database
-            self.graph_builder = GraphBuilder(vectordb_file=merged_vector_path)
-            
-            # Merge graph databases
-            if graph_db_paths:
-                merged_graph = self.graph_builder.merge_dbs(
-                    graph_files=graph_db_paths,
-                    output_name=f"g_{output_name}",
-                    db_type='standard'
+            logger.warning("No vector databases to merge, skipping vector and graph DB merge.")
+        else:
+            try:
+                # Merge vector databases
+                merged_vector_df = self.vector_builder.merge_db(
+                    parquet_files=vector_db_paths,
+                    output_name=f"v_{output_name}" 
                 )
                 
-                merged_graph_path = str(self.graph_dir / f"g_{output_name}.pkl")
-                logger.info(f"Merged graph database saved to {merged_graph_path}")
+                merged_vector_path_str = str(self.vector_dir / f"v_{output_name}.parquet")
+                logger.info(f"Merged vector database saved to {merged_vector_path_str}")
+                
+                # Initialize graph builder with the merged vector database
+                self.graph_builder = GraphBuilder(vectordb_file=merged_vector_path_str)
+                
+                # Merge graph databases
+                if graph_db_paths:
+                    merged_graph = self.graph_builder.merge_dbs(
+                        graph_files=graph_db_paths,
+                        output_name=f"g_{output_name}",
+                        db_type='standard'
+                    )
+                    
+                    merged_graph_path_str = str(self.graph_dir / f"g_{output_name}.pkl")
+                    logger.info(f"Merged graph database saved to {merged_graph_path_str}")
+                else:
+                    logger.warning("No graph databases to merge")
+            
+            except Exception as e:
+                logger.error(f"Error merging vector/graph databases: {str(e)}")
+                logger.debug(f"Merge error details: {traceback.format_exc()}")
+
+        return merged_vector_path_str, merged_graph_path_str
+
+    def _merge_memory_dbs(self, 
+                        memory_db_paths: List[str], 
+                        output_dir: Path,
+                        output_filename: str = "episodic_memory.parquet") -> Optional[str]:
+        """
+        Merge multiple episodic memory Parquet files into a single file.
+        
+        Args:
+            memory_db_paths: List of episodic memory Parquet file paths to merge.
+            output_dir: Directory to save the merged memory database.
+            output_filename: Filename for the merged memory database.
+            
+        Returns:
+            Optional[str]: Path to the merged memory database file, or None if an error occurs.
+        """
+        if not memory_db_paths:
+            logger.warning("No episodic memory database paths provided for merging.")
+            return None
+
+        logger.info(f"Merging {len(memory_db_paths)} episodic memory databases into {output_dir / output_filename}")
+        
+        all_memory_dfs = []
+        for file_path_str in memory_db_paths:
+            file_path = Path(file_path_str)
+            if file_path.exists() and file_path.is_file():
+                try:
+                    df = pd.read_parquet(file_path)
+                    all_memory_dfs.append(df)
+                except Exception as e:
+                    logger.error(f"Error reading memory db file {file_path}: {e}")
             else:
-                logger.warning("No graph databases to merge")
-                merged_graph_path = None
+                logger.warning(f"Memory db file not found or is not a file: {file_path}")
+
+        if not all_memory_dfs:
+            logger.warning("No valid episodic memory dataframes to merge.")
+            return None
             
-            return merged_vector_path, merged_graph_path
-            
+        try:
+            combined_df = pd.concat(all_memory_dfs, ignore_index=True)
+            output_path = output_dir / output_filename
+            combined_df.to_parquet(output_path)
+            logger.info(f"Merged episodic memory database saved to {output_path} with {len(combined_df)} entries.")
+            return str(output_path)
         except Exception as e:
-            logger.error(f"Error merging databases: {str(e)}")
-            logger.debug(f"Merge error details: {traceback.format_exc()}")
-            return None, None
-    
+            logger.error(f"Error merging or saving combined episodic memory database: {str(e)}")
+            logger.debug(f"Episodic memory merge error details: {traceback.format_exc()}")
+            return None
+
+    def _create_personality_memory_db(self, output_dir: Path) -> Optional[str]:
+        """
+        Creates and saves a personality memory database from sample traits.
+
+        Args:
+            output_dir: Directory to save the personality memory database.
+
+        Returns:
+            Optional[str]: Path to the saved personality memory database file, or None if an error occurs.
+        """
+        logger.info("Creating personality memory database.")
+        if not self.sample_personality_traits:
+            logger.warning("No sample personality traits defined. Skipping personality memory creation.")
+            return None
+
+        try:
+            df = pd.DataFrame(self.sample_personality_traits)
+            
+            # Add mode_id using UUIDs
+            df['mode_id'] = [self.data_utility.generate_uuid() for _ in range(len(df))]
+            
+            # Ensure all required columns from schema are present, even if some are optional in sample data
+            # Required: mode_id, mode_name, personality_type, cognitive_style, mbti_type
+            # Optional: mode_description, activation_contexts, activation_triggers
+            schema_required_cols = ["mode_id", "mode_name", "personality_type", "cognitive_style", "mbti_type"]
+            schema_optional_cols = ["mode_description", "activation_contexts", "activation_triggers"]
+
+            for col in schema_required_cols:
+                if col not in df.columns:
+                    logger.error(f"Missing required column '{col}' for personality memory. Cannot create.")
+                    # Or df[col] = None / default value if appropriate, but for required, it's an issue.
+                    return None 
+            
+            for col in schema_optional_cols:
+                if col not in df.columns:
+                    df[col] = None # Add optional columns if missing, filling with None or appropriate default
+
+            # Reorder columns to match schema expectations if desired, though Parquet doesn't strictly enforce order
+            # df = df[schema_required_cols + schema_optional_cols]
+
+            output_path = output_dir / "personality_memory.parquet"
+            df.to_parquet(output_path)
+            
+            self.stats["personality_memory_entries_created"] = len(df)
+            logger.info(f"Personality memory database saved to {output_path} with {len(df)} entries.")
+            return str(output_path)
+        except Exception as e:
+            logger.error(f"Error creating personality memory database: {str(e)}")
+            logger.debug(f"Personality memory creation error details: {traceback.format_exc()}")
+            return None
+
+    def _convert_parquet_to_json(self, parquet_path: Union[str, Path], json_path: Path) -> bool:
+        """
+        Converts a Parquet file to a JSON file (list of records).
+
+        Args:
+            parquet_path: Path to the input Parquet file.
+            json_path: Path to save the output JSON file.
+
+        Returns:
+            bool: True if conversion was successful, False otherwise.
+        """
+        parquet_file = Path(parquet_path)
+        if not parquet_file.exists():
+            logger.error(f"Parquet file not found for JSON conversion: {parquet_file}")
+            return False
+        
+        try:
+            df = pd.read_parquet(parquet_file)
+            # Convert all columns to string to handle potential complex types like lists/embeddings for JSON
+            # df = df.astype(str) # This might be too aggressive; to_json handles most types.
+            # Let's ensure embeddings (typically lists/arrays) are converted to string representation if not already.
+            for col in df.columns:
+                if isinstance(df[col].iloc[0], (list, pd.Series, pd.DataFrame)): # Check if first element is list-like
+                    df[col] = df[col].apply(str) # Convert list-like objects to string
+            
+            df.to_json(json_path, orient='records', indent=2, force_ascii=False)
+            logger.info(f"Successfully converted {parquet_file} to {json_path}")
+            return True
+        except Exception as e:
+            logger.error(f"Error converting Parquet file {parquet_file} to JSON {json_path}: {e}")
+            logger.debug(traceback.format_exc())
+            return False
+
     def run(self, 
            raw_dir: Optional[Union[str, Path]] = None,
            vector_dir: Optional[Union[str, Path]] = None,
@@ -519,19 +693,73 @@ class KnowledgeService:
         )
         
         # Step 3: Merge databases if requested
-        merged_vector_path = None
-        merged_graph_path = None
-        merged_memory_path = None
+        merged_vector_path_str: Optional[str] = None
+        merged_graph_path_str: Optional[str] = None
+        merged_episodic_memory_path_str: Optional[str] = None
+        personality_memory_db_path_str: Optional[str] = None # Already defined but ensure it's captured
+
+        vector_db_json_path: Optional[str] = None
+        episodic_memory_json_path: Optional[str] = None
+        personality_memory_json_path: Optional[str] = None
         
-        if merge_results and len(vector_db_paths) > 1:
-            # Generate a name based on the raw directory
+        if merge_results:
             output_name = raw_path.name if raw_path.name != "raw" else "complete"
             
-            merged_vector_path, merged_graph_path = self.merge_databases(
-                vector_db_paths=vector_db_paths,
-                graph_db_paths=graph_db_paths,
-                output_name=output_name
-            )
+            if len(vector_db_paths) > 0 : 
+                merged_vector_path_str, merged_graph_path_str = self.merge_databases(
+                    vector_db_paths=vector_db_paths,
+                    graph_db_paths=graph_db_paths, 
+                    output_name=output_name
+                )
+                if merged_vector_path_str:
+                    json_vec_path = vector_path / "vector_db_for_retriever.json"
+                    if self._convert_parquet_to_json(merged_vector_path_str, json_vec_path):
+                        vector_db_json_path = str(json_vec_path)
+            else:
+                logger.info("Skipping merging of vector and graph databases as no vector databases were created/found.")
+
+            if memory_db_paths:
+                merged_episodic_memory_path_str = self._merge_memory_dbs(
+                    memory_db_paths=memory_db_paths,
+                    output_dir=memory_path, 
+                    output_filename="episodic_memory.parquet"
+                )
+                if merged_episodic_memory_path_str:
+                    try:
+                        merged_df = pd.read_parquet(merged_episodic_memory_path_str)
+                        self.stats["episodic_memory_entries_created"] = len(merged_df)
+                        json_episodic_path = memory_path / "episodic_memory_for_retriever.json"
+                        if self._convert_parquet_to_json(merged_episodic_memory_path_str, json_episodic_path):
+                            episodic_memory_json_path = str(json_episodic_path)
+                    except Exception as e:
+                        logger.error(f"Could not read or convert merged episodic memory: {e}")
+            else:
+                logger.info("No individual episodic memory files to merge.")
+        else: # Handle case where merging is not done - convert individual files if any
+            if vector_db_paths: # Potentially convert the first or last individual vector DB
+                logger.info("Merge results set to False. Consider converting individual Parquet files if needed by retrievers.")
+                # As an example, let's convert the last processed vector DB if no merge
+                # This logic might need refinement based on actual use case for non-merged data
+                if not merged_vector_path_str and vector_db_paths:
+                    last_vector_db_parquet = vector_db_paths[-1]
+                    json_vec_path = Path(last_vector_db_parquet).parent / f"{Path(last_vector_db_parquet).stem}_for_retriever.json"
+                    if self._convert_parquet_to_json(last_vector_db_parquet, json_vec_path):
+                        vector_db_json_path = str(json_vec_path) # This would be for the last individual file
+
+            if memory_db_paths and not merged_episodic_memory_path_str:
+                # Similar logic for episodic memory if not merged
+                last_episodic_mem_parquet = memory_db_paths[-1]
+                json_episodic_path = Path(last_episodic_mem_parquet).parent / f"{Path(last_episodic_mem_parquet).stem}_for_retriever.json"
+                if self._convert_parquet_to_json(last_episodic_mem_parquet, json_episodic_path):
+                    episodic_memory_json_path = str(json_episodic_path)
+
+
+        # Step 4: Create Personality Memory DB (Parquet)
+        personality_memory_db_path_str = self._create_personality_memory_db(output_dir=memory_path)
+        if personality_memory_db_path_str:
+            json_personality_path = memory_path / "personality_memory_for_retriever.json"
+            if self._convert_parquet_to_json(personality_memory_db_path_str, json_personality_path):
+                personality_memory_json_path = str(json_personality_path)
         
         # Update stats and prepare result
         total_time = time.time() - overall_start_time
@@ -539,12 +767,16 @@ class KnowledgeService:
         result = {
             "status": "completed",
             "message": f"Successfully processed {len(files)} documents",
-            "vector_db_paths": vector_db_paths,
-            "graph_db_paths": graph_db_paths,
-            "memory_db_paths": memory_db_paths if memory_db_paths else [],
-            "merged_vector_db": merged_vector_path,
-            "merged_graph_db": merged_graph_path,
-            "merged_memory_db": merged_memory_path,
+            "individual_vector_db_paths": vector_db_paths,
+            "individual_graph_db_paths": graph_db_paths,
+            "individual_episodic_memory_db_paths": memory_db_paths,
+            "merged_vector_db_parquet": merged_vector_path_str,
+            "merged_graph_db_pickle": merged_graph_path_str, # Keep original key for clarity
+            "merged_episodic_memory_db_parquet": merged_episodic_memory_path_str,
+            "personality_memory_db_parquet": personality_memory_db_path_str,
+            "vector_db_json_path": vector_db_json_path,
+            "episodic_memory_json_path": episodic_memory_json_path,
+            "personality_memory_json_path": personality_memory_json_path,
             "stats": {
                 **self.stats,
                 "total_time": total_time
@@ -565,6 +797,8 @@ def main():
                         help="Directory to save vector databases")
     parser.add_argument("--graph_dir", type=str, default="db/graph",
                         help="Directory to save graph databases")
+    parser.add_argument("--memory_dir", type=str, default="db/memory",
+                        help="Directory to save memory databases")
     parser.add_argument("--config", type=str, default="config/main_config.json",
                         help="Path to configuration file")
     parser.add_argument("--chunking_method", type=str, default="hierarchy",
@@ -591,6 +825,7 @@ def main():
             raw_dir=args.raw_dir,
             vector_dir=args.vector_dir,
             graph_dir=args.graph_dir,
+            memory_dir=args.memory_dir,
             chunking_method=args.chunking_method,
             embedding_model=args.embedding_model,
             pdf_conversion_method=args.pdf_conversion,
@@ -606,15 +841,35 @@ def main():
         print(f"  Files processed: {result['stats']['files_processed']}")
         print(f"  PDFs converted: {result['stats']['pdfs_converted']}")
         print(f"  Chunks created: {result['stats']['chunks_created']}")
-        print(f"  Vector DB size: {result['stats']['vector_db_size'] / (1024*1024):.2f} MB")
-        print(f"  Graph nodes: {result['stats']['graph_nodes']}")
-        print(f"  Graph edges: {result['stats']['graph_edges']}")
-        print(f"  Processing time: {result['stats']['total_time']:.2f} seconds")
+        print(f"  Vector DB size: {result['stats']['vector_db_size'] / (1024*1024):.2f} MB") # Note: This is sum of individual file sizes
+        print(f"  Graph nodes: {result['stats']['graph_nodes']}") # Note: This is sum from individual graphs
+        print(f"  Graph edges: {result['stats']['graph_edges']}") # Note: This is sum from individual graphs
+        print(f"  Episodic Memory Entries: {result['stats']['episodic_memory_entries_created']}")
+        print(f"  Personality Memory Entries: {result['stats']['personality_memory_entries_created']}")
+        print(f"  Total Processing time: {result['stats']['total_time']:.2f} seconds")
         
-        if result['merged_vector_db']:
-            print(f"\nMerged databases:")
-            print(f"  Vector DB: {result['merged_vector_db']}")
-            print(f"  Graph DB: {result['merged_graph_db']}")
+        print(f"\nIndividual DB Paths:")
+        print(f"  Vector DBs (Parquet): {len(result['individual_vector_db_paths'])} files")
+        print(f"  Graph DBs (Pickle): {len(result['individual_graph_db_paths'])} files")
+        print(f"  Episodic Memory DBs (Parquet): {len(result['individual_episodic_memory_db_paths'])} files")
+
+        print(f"\nConsolidated Parquet/Pickle Databases:")
+        if result['merged_vector_db_parquet']:
+            print(f"  Merged Vector DB (Parquet): {result['merged_vector_db_parquet']}")
+        if result['merged_graph_db_pickle']:
+            print(f"  Merged Graph DB (Pickle): {result['merged_graph_db_pickle']}")
+        if result['merged_episodic_memory_db_parquet']:
+            print(f"  Merged Episodic Memory DB (Parquet): {result['merged_episodic_memory_db_parquet']}")
+        if result['personality_memory_db_parquet']:
+            print(f"  Personality Memory DB (Parquet): {result['personality_memory_db_parquet']}")
+
+        print(f"\nRetriever-Ready JSON Databases:")
+        if result['vector_db_json_path']:
+            print(f"  Vector DB (JSON for Retriever): {result['vector_db_json_path']}")
+        if result['episodic_memory_json_path']:
+            print(f"  Episodic Memory DB (JSON for Retriever): {result['episodic_memory_json_path']}")
+        if result['personality_memory_json_path']:
+            print(f"  Personality Memory DB (JSON for Retriever): {result['personality_memory_json_path']}")
         
         return 0
         
