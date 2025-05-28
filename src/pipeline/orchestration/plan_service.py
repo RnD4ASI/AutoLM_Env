@@ -1,6 +1,7 @@
 import json
 import time
 import traceback
+import uuid # Added for graph_id
 
 from typing import List, Dict, Any, Optional, Union, Tuple
 from pathlib import Path
@@ -90,9 +91,24 @@ class PlanService:
         
         try:
             # Step 1: Load task prompt library
-            library_path = Path(task_prompt_library_path) if library_path else Path.cwd() / "config" / "task_prompt_library.json"
-            task_library = self.datautility.text_operation('load', library_path, file_type='json')
-            logger.debug(f"Successfully loaded task library from {library_path} with {len(task_library)} prompts")
+            library_path = Path(task_prompt_library_path) if task_prompt_library_path else Path.cwd() / "config" / "task_prompt_library.json"
+            raw_task_library = self.datautility.text_operation('load', library_path, file_type='json')
+            
+            # Adjust task_library if it's nested according to schema
+            if isinstance(raw_task_library, dict) and "collections" in raw_task_library and \
+               isinstance(raw_task_library["collections"], dict) and "task_prompt_templates" in raw_task_library["collections"]:
+                task_library = raw_task_library["collections"]["task_prompt_templates"]
+                logger.info(f"Adjusted task library to use 'collections.task_prompt_templates' structure from {library_path}.")
+            else:
+                task_library = raw_task_library # Assume it's already the direct dictionary of prompts
+                logger.warning(f"Task library from {library_path} does not match the full schema structure (collections.task_prompt_templates). Proceeding with loaded data directly.")
+            
+            if not isinstance(task_library, dict) or not task_library:
+                logger.error(f"Task library is empty or not a dictionary after potential adjustment. Path: {library_path}")
+                # Depending on desired behavior, could raise error or return empty results
+                return None # Or appropriate error response
+
+            logger.debug(f"Successfully processed task library from {library_path}, found {len(task_library)} prompts.")
             
             # Step 2.1: Select relevant prompts based on goal using reasoning model (i.e. build nodes)
             selection_prompt = self.aiutility.apply_meta_prompt(
@@ -169,18 +185,44 @@ class PlanService:
             planning_time = time.time() - start_time
             logger.info(f"Task sequence planning completed in {planning_time:.2f} seconds")            
             
-            # Step 5: Save the planning results
+            planning_time = time.time() - start_time
+            logger.info(f"Task sequence planning completed in {planning_time:.2f} seconds")            
+            
+            # Step 5: Prepare and Save the planning results in schema_plan.json format
             if output_path is None:
                 output_dir = Path.cwd() / "config"
             else:
                 output_dir = Path(output_path) if isinstance(output_path, str) else output_path
             
-            # Create output directory if it doesn't exist
             self.datautility.ensure_directory(output_dir)
             
-            # Save prompt flow config
+            graph_id = str(uuid.uuid4())
+            schema_conformant_plan = {
+                "version": "1.0.0", # From schema_plan.json
+                "description": f"AutoLM generated plan for goal: {goal}",
+                "collections": { # Adding collections structure
+                    "graphs": {
+                        graph_id: {
+                            "graph_id": graph_id, # Explicitly adding graph_id inside the graph object
+                            **prompt_flow_config, # This includes 'nodes' and 'edges'
+                            "name": f"Plan for: {goal[:50]}...",
+                            "description": goal,
+                            "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                            "created_by": "PlanService",
+                            "tags": ["automated_plan"],
+                            "metadata": {
+                                "goal": goal,
+                                "reasoning_model": reasoning_model,
+                                "best_of_n_used": best_of_n
+                            }
+                        }
+                    }
+                }
+            }
+            
+            # Save prompt flow config (now schema_conformant_plan)
             flow_path = output_dir / "prompt_flow_config.json"
-            self.datautility.text_operation('save', flow_path, prompt_flow_config, file_type='json', indent=2)
+            self.datautility.text_operation('save', flow_path, schema_conformant_plan, file_type='json', indent=2)
             
             # Save shortlisted prompts
             prompts_path = output_dir / "shortlisted_prompts.json"
