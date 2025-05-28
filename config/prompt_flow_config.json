@@ -1,0 +1,15 @@
+{
+  "nodes": {
+    "node_1": {
+      "prompt_id": "prompt_0003",
+      "task_summary": "Perform data analysis on a hypothetical dataset related to APS112/113.",
+      "context_query": "Details about APS112 and APS113 capital adequacy requirements.",
+      "output_variable_name": "analysis_output_node_1"
+    }
+  },
+  "edges": [],
+  "metadata": {
+    "name": "Test Execution Flow for APS112/113 Analysis",
+    "goal_description": "Analyze APS112/113 data"
+  }
+}
